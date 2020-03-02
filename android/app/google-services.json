@@ -1,0 +1,47 @@
+{
+    "project_info": {
+      "project_number": "996751923239",
+      "firebase_url": "https://docweb-1a252.firebaseio.com",
+      "project_id": "docweb-1a252",
+      "storage_bucket": "docweb-1a252.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:996751923239:android:43c6f91c6fef76c55b1602",
+          "android_client_info": {
+            "package_name": "com.moozenhq.digamobile"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "996751923239-0piknur43i4aldsfcnn5g8oiscmlpg1m.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyBTja_ed-GMsi4D2TWspckSpYjaev6ybbU"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "996751923239-0piknur43i4aldsfcnn5g8oiscmlpg1m.apps.googleusercontent.com",
+                "client_type": 3
+              },
+              {
+                "client_id": "996751923239-361bvj03qavtfnuk0iva3v529n62uk8k.apps.googleusercontent.com",
+                "client_type": 2,
+                "ios_info": {
+                  "bundle_id": "com.moozenhq.digamobile"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
