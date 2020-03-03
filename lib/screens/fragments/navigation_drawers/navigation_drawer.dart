@@ -26,12 +26,12 @@ class NavigationDrawer extends StatelessWidget {
                 //stops: [0.1, 0.5,0.5, 0.7, 0.9],
                 colors: [
                   ColorTween(
-                    begin: Colors.blueAccent,
-                    end: Colors.blueGrey[400].withRed(100),
+                    begin: Colors.blue,
+                    end: Colors.blue,
                   ).lerp(dragUpdate),
                   ColorTween(
-                    begin: Colors.green,
-                    end: Colors.blueGrey[800].withGreen(80),
+                    begin: Colors.blue,
+                    end: Colors.red,
                   ).lerp(dragUpdate),
                 ],
               ),
@@ -56,40 +56,40 @@ class NavigationDrawer extends StatelessWidget {
                                 child: Container(
                                   height: 90,
                                   width: 90,
-                                  color: Colors.blueAccent,
+                                  color: Colors.blue[50],
                                 ),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                             ),
                             Text(
-                              "User",
+                              "Yohanne Smit",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
                             )
                           ],
                           //mainAxisAlignment: MainAxisAlignment.center,
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                        ),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                              onTap: () => print("Rate us"),
-                              child: ListTile(
-                                  title: Text(
-                                    "Rate",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 14),
-                                  ),
-                                  leading: Icon(
-                                    hasRated
-                                        ? LineAwesomeIcons.star
-                                        : LineAwesomeIcons.star_o,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ))),
-                        ),
+                        //Padding(
+                          //padding: EdgeInsets.all(10),
+                        //),
+                        // Material(
+                        //   color: Colors.transparent,
+                        //   child: InkWell(
+                        //       onTap: () => print("Rate us"),
+                        //       child: ListTile(
+                        //           title: Text(
+                        //             "Rate",
+                        //             style: TextStyle(
+                        //                 color: Colors.white, fontSize: 14),
+                        //           ),
+                        //           leading: Icon(
+                        //             hasRated
+                        //                 ? LineAwesomeIcons.star
+                        //                 : LineAwesomeIcons.star_o,
+                        //             color: Colors.white,
+                        //             size: 22,
+                        //           ))),
+                        // ),
                         Padding(
                           padding: const EdgeInsets.only(top: 12.0),
                           child: Container(
@@ -113,22 +113,22 @@ class NavigationDrawer extends StatelessWidget {
                                     size: 22,
                                   ))),
                         ),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                              onTap: () => print("Settings"),
-                              child: ListTile(
-                                  title: Text(
-                                    "Settings",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 14),
-                                  ),
-                                  leading: Icon(
-                                    LineAwesomeIcons.cog,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ))),
-                        ),
+                        // Material(
+                        //   color: Colors.transparent,
+                        //   child: InkWell(
+                        //       onTap: () => print("Settings"),
+                        //       child: ListTile(
+                        //           title: Text(
+                        //             "Settings",
+                        //             style: TextStyle(
+                        //                 color: Colors.white, fontSize: 14),
+                        //           ),
+                        //           leading: Icon(
+                        //             LineAwesomeIcons.cog,
+                        //             color: Colors.white,
+                        //             size: 22,
+                        //           ))),
+                        // ),
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
@@ -151,7 +151,7 @@ class NavigationDrawer extends StatelessWidget {
                               onTap: () => print("Contact us"),
                               child: ListTile(
                                   title: Text(
-                                    "Contact",
+                                    "Support",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 14),
                                   ),

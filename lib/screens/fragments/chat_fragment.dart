@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:dash_chat/dash_chat.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker/image_picker.dart';
 
 class ChatFragment extends StatefulWidget {
   final PageDestination destination;
@@ -23,20 +22,20 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   File _image;
 
-  Future getImage() async {
-    // PermissionStatus permissionResult =
-    //     await SimplePermissions.requestPermission(
-    //         Permission.WriteExternalStorage);
-    // if (permissionResult == PermissionStatus.authorized) {
-    //   // code of read or write file in external storage (SD card)
+  // Future getImage() async {
+  //   // PermissionStatus permissionResult =
+  //   //     await SimplePermissions.requestPermission(
+  //   //         Permission.WriteExternalStorage);
+  //   // if (permissionResult == PermissionStatus.authorized) {
+  //   //   // code of read or write file in external storage (SD card)
 
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      _image = image;
-    });
-    //}
-  }
+  //   setState(() {
+  //     _image = image;
+  //   });
+  //   //}
+  // }
 
   final ChatUser user = ChatUser(
     name: "Fayeed",
@@ -60,6 +59,14 @@ class _ChatFragmentState extends State<ChatFragment> {
     super.initState();
 
     messages.addAll([
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()), 
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
@@ -152,7 +159,7 @@ class _ChatFragmentState extends State<ChatFragment> {
               dateFormat: DateFormat('yyyy-MMM-dd'),
               timeFormat: DateFormat('HH:mm'),
               messages: messages,
-              showUserAvatar: true,
+              showUserAvatar: false,
               showAvatarForEveryMessage: false,
               scrollToBottom: true,
               // inputFooterBuilder: () {
@@ -215,47 +222,47 @@ class _ChatFragmentState extends State<ChatFragment> {
               shouldShowLoadEarlier: false,
               showTraillingBeforeSend: true,
               trailing: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.photo),
-                  onPressed: () async {
-                    File result = await ImagePicker.pickImage(
-                      source: ImageSource.gallery,
-                      maxHeight: 400,
-                      maxWidth: 400,
-                    );
+                // IconButton(
+                //   icon: Icon(Icons.photo),
+                //   onPressed: () async {
+                //     File result = await ImagePicker.pickImage(
+                //       source: ImageSource.gallery,
+                //       maxHeight: 400,
+                //       maxWidth: 400,
+                //     );
 
-                    // if (result != null) {
-                    //   final StorageReference storageRef =
-                    //       FirebaseStorage.instance.ref().child("chat_images");
+                //     // if (result != null) {
+                //     //   final StorageReference storageRef =
+                //     //       FirebaseStorage.instance.ref().child("chat_images");
 
-                    //   StorageUploadTask uploadTask = storageRef.putFile(
-                    //     result,
-                    //     StorageMetadata(
-                    //       contentType: 'image/jpg',
-                    //     ),
-                    //   );
-                    //   StorageTaskSnapshot download =
-                    //       await uploadTask.onComplete;
+                //     //   StorageUploadTask uploadTask = storageRef.putFile(
+                //     //     result,
+                //     //     StorageMetadata(
+                //     //       contentType: 'image/jpg',
+                //     //     ),
+                //     //   );
+                //     //   StorageTaskSnapshot download =
+                //     //       await uploadTask.onComplete;
 
-                    //   String url = await download.ref.getDownloadURL();
+                //     //   String url = await download.ref.getDownloadURL();
 
-                    //   ChatMessage message =
-                    //       ChatMessage(text: "", user: user, image: url);
+                //     //   ChatMessage message =
+                //     //       ChatMessage(text: "", user: user, image: url);
 
-                    //   var documentReference = Firestore.instance
-                    //       .collection('messages')
-                    //       .document(
-                    //           DateTime.now().millisecondsSinceEpoch.toString());
+                //     //   var documentReference = Firestore.instance
+                //     //       .collection('messages')
+                //     //       .document(
+                //     //           DateTime.now().millisecondsSinceEpoch.toString());
 
-                    //   Firestore.instance.runTransaction((transaction) async {
-                    //     await transaction.set(
-                    //       documentReference,
-                    //       message.toJson(),
-                    //     );
-                    //   });
+                //     //   Firestore.instance.runTransaction((transaction) async {
+                //     //     await transaction.set(
+                //     //       documentReference,
+                //     //       message.toJson(),
+                //     //     );
+                //     //   });
                     // }
-                  },
-                )
+                 // },
+               // )
               ],
             ),
           ),

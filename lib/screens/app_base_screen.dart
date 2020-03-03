@@ -156,7 +156,7 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
                     key: _destinationKeys[destination.index],
                     child: _index == 0
                         ? HomePage(
-                            "Welcome",
+                            "Welcome ..",
                             menuClicked: () {
                               print("clicked in base");
                               _controller.status == AnimationStatus.completed ||

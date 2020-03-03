@@ -89,19 +89,16 @@ class _HomeScreen extends StatelessWidget {
             children: <Widget>[
               Text('You are logged in'),
               SizedBox(height: 10.0),
-              RaisedButton(
-                onPressed: () {
-                  AuthService().signOut();
-                },
-                child: Center(
-                  child: Text('Sign Out'),
-                ),
-                color: Colors.red,
-              ),
-              new Text(
-                'You have pushed the button this many times:',
-              ),
-              new Counter(),
+              // RaisedButton(
+              //   onPressed: () {
+              //     AuthService().signOut();
+              //   },
+              //   child: Center(
+              //     child: Text('Sign Out'),
+              //   ),
+              //   color: Colors.red,
+              // ),
+              //new Counter(),
             ],
           ),
         ),
@@ -112,6 +109,7 @@ class _HomeScreen extends StatelessWidget {
           Navigator.of(context).pushNamed(ConstantsRoutes.HOME_CHAT_PAGE);
         },
         child: Icon(Icons.chat),
+        backgroundColor: Colors.orange,
       ),
       resizeToAvoidBottomInset: true,
     );
