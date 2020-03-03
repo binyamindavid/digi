@@ -2,14 +2,37 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:digamobile/models/api_specific_models/snatchbot_message_response_model.dart';
+import 'package:digamobile/models/app_state.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:dash_chat/dash_chat.dart';
 
 class ChatbotServiceConfig {
-  ChatbotServiceConfig(this.endPointUrl) {
+  ChatbotServiceConfig(this.endPointUrl,
+      {this.store,
+      this.chatbotAvatarLink:
+          "https://dvgpba5hywmpo.cloudfront.net/media/image/7y3hB8o4qbBA1emMcCIMpkZnm"}) {
     if (client == null) client = http.Client();
+
+    //Initialise the bot user
+    _botUser = ChatUser(
+        uid: "dg-bot01",
+        name: "Diga-Bot",
+        containerColor: Colors.lightBlue,
+        avatar: chatbotAvatarLink);
   }
+
+  ///A reference to the global redux [AppState] store to retrive username and other config values
+  ///Cannot be null
+  AppState store;
+  String chatbotAvatarLink;
+
+  set(state) => store;
+
+  ///The [ChatUser] refrence for the chatbot to display in the chat ui
+  ChatUser _botUser;
 
   ///Add the requured params for the conversation stream
   ///The [user_id] should be unique
@@ -23,9 +46,10 @@ class ChatbotServiceConfig {
   final endPointUrl;
   http.Client client;
 
-  ///[StreamController] Controls the stream and Sink for message api
-  ///Set to broadcast so the messages don't decay on first emmit
-  StreamController _apiStreamController = StreamController.broadcast();
+  ///[StreamController] Controls the stream and Sink for [ChatUiMessage] api
+
+  StreamController<ChatUiMessage> _apiStreamController =
+      StreamController<ChatUiMessage>();
 
   ///[chatBotMessageStream] is a [Stream]that will be subscribed to by any listeners
   ///emmits messages from this api that are passed into the internal [StreamSink]
@@ -43,7 +67,7 @@ class ChatbotServiceConfig {
       try {
         var urlEP =
             '${url}?user_id=${this.userId}&message_id=${this.messageId}';
-        // var client = new http.Client();
+
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({'message': message.text});
         request.headers[HttpHeaders.contentTypeHeader] =
@@ -52,12 +76,67 @@ class ChatbotServiceConfig {
         request.body = body;
         await client
             .send(request)
-            .then((response) => response.stream
-                .bytesToString()
-                .then((value) => print(value.toString())))
+            .then(
+              (response) => response.stream.bytesToString().then(
+                (value) {
+                  print(value.toString());
+
+                  deliverToUi(mapJsonToChatResponseModel(json.decode(value)));
+                },
+              ),
+            )
             .catchError((error) => print(error.toString()));
       } catch (e) {
         print("@@@error decoding:$e");
+      }
+    }
+  }
+
+  ChatReponseModel mapJsonToChatResponseModel(Map json) {
+    print("@@@@ ---- decoded $json");
+    ChatReponseModel response = ChatReponseModel.fromJson(json);
+    return response;
+  }
+
+  emitNewMessage(ChatUiMessage message) {
+    print("Emitting messages ${message.message}");
+    _internalMessageStreamSink.add(message);
+  }
+
+  ChatMessage configureChatMessage(ChatReponseModel response) {
+    QuickReplies replies;
+    if (response.suggested.length > 0) {
+      List<Reply> reps = [];
+      for (int i = 0; i < response.suggested.length; i++) {
+        reps.add(Reply(
+            title: response.suggested[i],
+            value: response.suggested[i],
+            messageId: "$i"));
+      }
+      replies = QuickReplies(keepIt: true, values: reps);
+    }
+    return ChatMessage(
+        text: response.messages.last.message,
+        user: _botUser,
+        quickReplies: replies ?? QuickReplies());
+  }
+
+  void deliverToUi(ChatReponseModel response) {
+    int messagesInResponse = response.messages.length;
+    print("messages in response $messagesInResponse");
+
+    int CardsInResponse = response.cards.length;
+
+    ///First issue the text based messages to the stream
+    ///Iterates over the messages and emits them one at a time
+    for (int i = 0; i < messagesInResponse; i++) {
+      if (i == messagesInResponse - 1) {
+        emitNewMessage(
+            new ChatUiMessage(message: configureChatMessage(response)));
+      } else {
+        emitNewMessage(new ChatUiMessage(
+            message: ChatMessage(
+                text: response.messages[i].message, user: _botUser, id: "$i")));
       }
     }
   }
@@ -70,4 +149,14 @@ class ChatbotServiceConfig {
     ///close the connection to the http client chatbot api
     client.close();
   }
+}
+
+class ChatUiMessage {
+  final ChatMessage message;
+
+  ///The delay in milliseconds to wait before showing the message
+  ///To give the 'bot is typing' effect
+  final int delayMilliSeconds;
+
+  ChatUiMessage({@required this.message, this.delayMilliSeconds: 300});
 }

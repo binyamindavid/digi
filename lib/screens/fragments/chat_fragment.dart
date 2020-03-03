@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:digamobile/models/app_state.dart';
 import 'package:digamobile/services/chatbot_service_config.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -59,36 +59,56 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   var i = 0;
 
+  _onMessageReceived(message) {
+    if (message != null) {
+      if (message is ChatUiMessage) {
+        print(
+            "@@@@@___________ Snapshot data ${message.message.text}_________@@@@");
+
+        //Update the messages only if there are new messages
+        if (message.message.id != messages.last.id) {
+          systemMessage(message.message, message.delayMilliSeconds);
+          //messages = [...messages, message.message];
+        }
+      }
+    }
+  }
+
   @override
-  Future<void> initState() {
+  void dispose() {
+    _chatConfig.dispose();
+    super.dispose();
+  }
+
+  @override
+  initState() {
     super.initState();
 
     _chatConfig = ChatbotServiceConfig(
-        'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91');
+      'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91',
+    );
+
+    _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
     messages.addAll([
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
+      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
     ]);
   }
 
-  void systemMessage() {
-    Timer(Duration(milliseconds: 300), () {
-      if (i < 6) {
-        if (mounted) if (m.length > i)
-          setState(() {
-            messages = [...messages, m[i]];
-            // messages = []
-            //   ..addAll(messages)
-            //   ..add(m[i]);
-          });
-        i++;
-      }
+  void systemMessage(message, duration) async {
+    print("Adding message $message");
+    Timer(Duration(milliseconds: duration), () {
+      if (mounted)
+        setState(() {
+          messages = [...messages, message];
+        });
+
       Timer(Duration(milliseconds: 300), () {
         _chatViewKey.currentState.scrollController
           ..animateTo(
@@ -103,16 +123,7 @@ class _ChatFragmentState extends State<ChatFragment> {
   void onSend(ChatMessage message) {
     print(message.toJson());
     _chatConfig.sendMessage(message);
-    // var documentReference = Firestore.instance
-    //     .collection('messages')
-    //     .document(DateTime.now().millisecondsSinceEpoch.toString());
 
-    // Firestore.instance.runTransaction((transaction) async {
-    //   await transaction.set(
-    //     documentReference,
-    //     message.toJson(),
-    //   );
-    // });
     setState(() {
       //messages = [...messages, message];
       messages = []
@@ -120,19 +131,12 @@ class _ChatFragmentState extends State<ChatFragment> {
         ..add(message);
       print(messages.length);
     });
-
-    if (i == 0) {
-      systemMessage();
-      Timer(Duration(milliseconds: 600), () {
-        systemMessage();
-      });
-    } else {
-      systemMessage();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    AppState store = StoreProvider.of<AppState>(context).state;
+    _chatConfig.set(store);
     return Scaffold(
       extendBody: false,
       appBar: CupertinoNavigationBar(
@@ -178,33 +182,8 @@ class _ChatFragmentState extends State<ChatFragment> {
                 color: Colors.white,
               ),
               onQuickReply: (Reply reply) {
-                setState(() {
-                  messages.add(ChatMessage(
-                      text: reply.value,
-                      createdAt: DateTime.now(),
-                      user: user));
-
-                  messages = []..addAll(messages);
-                });
-
-                Timer(Duration(milliseconds: 300), () {
-                  _chatViewKey.currentState.scrollController
-                    ..animateTo(
-                      _chatViewKey.currentState.scrollController.position
-                          .maxScrollExtent,
-                      curve: Curves.easeOut,
-                      duration: const Duration(milliseconds: 300),
-                    );
-
-                  if (i == 0) {
-                    systemMessage();
-                    Timer(Duration(milliseconds: 600), () {
-                      systemMessage();
-                    });
-                  } else {
-                    systemMessage();
-                  }
-                });
+                onSend(ChatMessage(
+                    text: reply.title, createdAt: DateTime.now(), user: user));
               },
               onLoadEarlier: () {
                 print("laoding...");
@@ -220,37 +199,6 @@ class _ChatFragmentState extends State<ChatFragment> {
                       maxHeight: 400,
                       maxWidth: 400,
                     );
-
-                    // if (result != null) {
-                    //   final StorageReference storageRef =
-                    //       FirebaseStorage.instance.ref().child("chat_images");
-
-                    //   StorageUploadTask uploadTask = storageRef.putFile(
-                    //     result,
-                    //     StorageMetadata(
-                    //       contentType: 'image/jpg',
-                    //     ),
-                    //   );
-                    //   StorageTaskSnapshot download =
-                    //       await uploadTask.onComplete;
-
-                    //   String url = await download.ref.getDownloadURL();
-
-                    //   ChatMessage message =
-                    //       ChatMessage(text: "", user: user, image: url);
-
-                    //   var documentReference = Firestore.instance
-                    //       .collection('messages')
-                    //       .document(
-                    //           DateTime.now().millisecondsSinceEpoch.toString());
-
-                    //   Firestore.instance.runTransaction((transaction) async {
-                    //     await transaction.set(
-                    //       documentReference,
-                    //       message.toJson(),
-                    //     );
-                    //   });
-                    // }
                   },
                 )
               ],
