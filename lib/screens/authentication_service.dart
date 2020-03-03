@@ -18,7 +18,9 @@ class AuthenticationService extends StatelessWidget {
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return AppBase();
+              return AppBase(
+                isLoggedIn: true,
+              );
             } else {
               return LoginScreen();
             }

@@ -6,10 +6,10 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import '../../../auth_service.dart';
 
 class NavigationDrawer extends StatelessWidget {
-  NavigationDrawer({Key key, this.dragUpdate: 0}) : super(key: key);
+  NavigationDrawer({Key key, this.dragUpdate: 0, this.isSignedIn: false})
+      : super(key: key);
   final double dragUpdate;
-  final availableSos = false;
-  final isSignedIn = false;
+  final isSignedIn;
   final hasRated = false;
   @override
   Widget build(BuildContext context) {
@@ -91,45 +91,7 @@ class NavigationDrawer extends StatelessWidget {
                                   ))),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 24.0),
-                          child: Container(
-                            height: 1,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Material(
-                          color: availableSos
-                              ? Colors.red[800]
-                              : Colors.red.shade900.withAlpha(150),
-                          child: InkWell(
-                              onTap: () => print("Sos"),
-                              child: ListTile(
-                                  title: Text(
-                                    "S.O.S",
-                                    style: TextStyle(
-                                        color: availableSos
-                                            ? Colors.white
-                                            : Colors.grey.shade300,
-                                        fontSize: 14),
-                                  ),
-                                  trailing: availableSos
-                                      ? Icon(
-                                          Icons.adjust,
-                                          color: Colors.green[300],
-                                        )
-                                      : Icon(
-                                          Icons.album,
-                                          color: Colors.red[700].withAlpha(150),
-                                        ),
-                                  leading: Icon(
-                                    LineAwesomeIcons.exclamation_triangle,
-                                    //FontAwesomeIcons.exclamationTriangle,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ))),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
+                          padding: const EdgeInsets.only(top: 12.0),
                           child: Container(
                             height: 1,
                             color: Colors.grey,
@@ -216,14 +178,14 @@ class NavigationDrawer extends StatelessWidget {
                                       onTap: () => AuthService().signOut(),
                                       child: ListTile(
                                           title: Text(
-                                            "Logout",
+                                            "Sign Out",
                                             style: TextStyle(
-                                                color: Colors.grey,
+                                                color: Colors.white,
                                                 fontSize: 16),
                                           ),
                                           leading: Icon(
                                             Icons.exit_to_app,
-                                            color: Colors.grey,
+                                            color: Colors.white,
                                             size: 22,
                                           ))),
                                 ),
