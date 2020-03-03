@@ -6,12 +6,14 @@ import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 
 class ChatFragment extends StatefulWidget {
   final PageDestination destination;
 
-  const ChatFragment({Key key, this.destination}) : super(key: key);
+  const ChatFragment({
+    Key key,
+    this.destination,
+  }) : super(key: key);
   @override
   _ChatFragmentState createState() => _ChatFragmentState();
 }
@@ -22,18 +24,18 @@ class _ChatFragmentState extends State<ChatFragment> {
   File _image;
 
   Future getImage() async {
-    PermissionStatus permissionResult =
-        await SimplePermissions.requestPermission(
-            Permission.WriteExternalStorage);
-    if (permissionResult == PermissionStatus.authorized) {
-      // code of read or write file in external storage (SD card)
+    // PermissionStatus permissionResult =
+    //     await SimplePermissions.requestPermission(
+    //         Permission.WriteExternalStorage);
+    // if (permissionResult == PermissionStatus.authorized) {
+    //   // code of read or write file in external storage (SD card)
 
-      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-      setState(() {
-        _image = image;
-      });
-    }
+    setState(() {
+      _image = image;
+    });
+    //}
   }
 
   final ChatUser user = ChatUser(
@@ -58,21 +60,6 @@ class _ChatFragmentState extends State<ChatFragment> {
     super.initState();
 
     messages.addAll([
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
@@ -139,120 +126,139 @@ class _ChatFragmentState extends State<ChatFragment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CupertinoNavigationBar(),
-      body: DashChat(
-        height: MediaQuery.of(context).size.height - 60.0,
-        key: _chatViewKey,
-        inverted: false,
-        onSend: onSend,
-        user: user,
-        inputDecoration:
-            InputDecoration.collapsed(hintText: "Add message here..."),
-        dateFormat: DateFormat('yyyy-MMM-dd'),
-        timeFormat: DateFormat('HH:mm'),
-        messages: messages,
-        showUserAvatar: true,
-        showAvatarForEveryMessage: false,
-        scrollToBottom: true,
-        // inputFooterBuilder: () {
-        //   return Column(
-        //     children: [
-        //       Text('asd'),
-        //       Text('asd'),
-        //       Text('asd'),
-        //       Text('asd'),
-        //       Text('asd'),
-        //       Text('asd'),
-        //     ],
-        //   );
-        // },
-        onPressAvatar: (ChatUser user) {
-          print("OnPressAvatar: ${user.name}");
-        },
-        onLongPressAvatar: (ChatUser user) {
-          print("OnLongPressAvatar: ${user.name}");
-        },
-        inputMaxLines: 5,
-        alwaysShowSend: true,
-        inputTextStyle: TextStyle(fontSize: 16.0),
-        inputContainerStyle: BoxDecoration(
-          border: Border.all(width: 0.0),
-          color: Colors.white,
-        ),
-        onQuickReply: (Reply reply) {
-          setState(() {
-            messages.add(ChatMessage(
-                text: reply.value, createdAt: DateTime.now(), user: user));
+      extendBody: false,
+      appBar: CupertinoNavigationBar(
+        automaticallyImplyMiddle: true,
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+            icon: Icon(CupertinoIcons.back),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+            }),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Flexible(
+            flex: 1,
+            child: DashChat(
+              height: MediaQuery.of(context).size.height - 120.0,
+              key: _chatViewKey,
+              inverted: false,
+              onSend: onSend,
+              user: user,
 
-            messages = []..addAll(messages);
-          });
-
-          Timer(Duration(milliseconds: 300), () {
-            _chatViewKey.currentState.scrollController
-              ..animateTo(
-                _chatViewKey
-                    .currentState.scrollController.position.maxScrollExtent,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
-              );
-
-            if (i == 0) {
-              systemMessage();
-              Timer(Duration(milliseconds: 600), () {
-                systemMessage();
-              });
-            } else {
-              systemMessage();
-            }
-          });
-        },
-        onLoadEarlier: () {
-          print("laoding...");
-        },
-        shouldShowLoadEarlier: false,
-        showTraillingBeforeSend: true,
-        trailing: <Widget>[
-          IconButton(
-            icon: Icon(Icons.photo),
-            onPressed: () async {
-              File result = await ImagePicker.pickImage(
-                source: ImageSource.gallery,
-                maxHeight: 400,
-                maxWidth: 400,
-              );
-
-              // if (result != null) {
-              //   final StorageReference storageRef =
-              //       FirebaseStorage.instance.ref().child("chat_images");
-
-              //   StorageUploadTask uploadTask = storageRef.putFile(
-              //     result,
-              //     StorageMetadata(
-              //       contentType: 'image/jpg',
-              //     ),
+              inputDecoration: InputDecoration(hintText: "Add message here..."),
+              dateFormat: DateFormat('yyyy-MMM-dd'),
+              timeFormat: DateFormat('HH:mm'),
+              messages: messages,
+              showUserAvatar: true,
+              showAvatarForEveryMessage: false,
+              scrollToBottom: true,
+              // inputFooterBuilder: () {
+              //   return Column(
+              //     children: [
+              //       Text('asd'),
+              //       Text('asd'),
+              //       Text('asd'),
+              //       Text('asd'),
+              //       Text('asd'),
+              //       Text('asd'),
+              //     ],
               //   );
-              //   StorageTaskSnapshot download =
-              //       await uploadTask.onComplete;
+              // },
+              onPressAvatar: (ChatUser user) {
+                print("OnPressAvatar: ${user.name}");
+              },
+              onLongPressAvatar: (ChatUser user) {
+                print("OnLongPressAvatar: ${user.name}");
+              },
+              inputMaxLines: 5,
+              alwaysShowSend: true,
+              inputTextStyle: TextStyle(fontSize: 16.0),
+              inputContainerStyle: BoxDecoration(
+                border: Border.all(width: 0.0),
+                color: Colors.white,
+              ),
+              onQuickReply: (Reply reply) {
+                setState(() {
+                  messages.add(ChatMessage(
+                      text: reply.value,
+                      createdAt: DateTime.now(),
+                      user: user));
 
-              //   String url = await download.ref.getDownloadURL();
+                  messages = []..addAll(messages);
+                });
 
-              //   ChatMessage message =
-              //       ChatMessage(text: "", user: user, image: url);
+                Timer(Duration(milliseconds: 300), () {
+                  _chatViewKey.currentState.scrollController
+                    ..animateTo(
+                      _chatViewKey.currentState.scrollController.position
+                          .maxScrollExtent,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 300),
+                    );
 
-              //   var documentReference = Firestore.instance
-              //       .collection('messages')
-              //       .document(
-              //           DateTime.now().millisecondsSinceEpoch.toString());
+                  if (i == 0) {
+                    systemMessage();
+                    Timer(Duration(milliseconds: 600), () {
+                      systemMessage();
+                    });
+                  } else {
+                    systemMessage();
+                  }
+                });
+              },
+              onLoadEarlier: () {
+                print("laoding...");
+              },
+              shouldShowLoadEarlier: false,
+              showTraillingBeforeSend: true,
+              trailing: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.photo),
+                  onPressed: () async {
+                    File result = await ImagePicker.pickImage(
+                      source: ImageSource.gallery,
+                      maxHeight: 400,
+                      maxWidth: 400,
+                    );
 
-              //   Firestore.instance.runTransaction((transaction) async {
-              //     await transaction.set(
-              //       documentReference,
-              //       message.toJson(),
-              //     );
-              //   });
-              // }
-            },
-          )
+                    // if (result != null) {
+                    //   final StorageReference storageRef =
+                    //       FirebaseStorage.instance.ref().child("chat_images");
+
+                    //   StorageUploadTask uploadTask = storageRef.putFile(
+                    //     result,
+                    //     StorageMetadata(
+                    //       contentType: 'image/jpg',
+                    //     ),
+                    //   );
+                    //   StorageTaskSnapshot download =
+                    //       await uploadTask.onComplete;
+
+                    //   String url = await download.ref.getDownloadURL();
+
+                    //   ChatMessage message =
+                    //       ChatMessage(text: "", user: user, image: url);
+
+                    //   var documentReference = Firestore.instance
+                    //       .collection('messages')
+                    //       .document(
+                    //           DateTime.now().millisecondsSinceEpoch.toString());
+
+                    //   Firestore.instance.runTransaction((transaction) async {
+                    //     await transaction.set(
+                    //       documentReference,
+                    //       message.toJson(),
+                    //     );
+                    //   });
+                    // }
+                  },
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

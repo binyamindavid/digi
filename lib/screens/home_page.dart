@@ -10,10 +10,14 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   final String title;
   //Call back to pass menu click event to the app base to open the app drawer
-  final Function() MenuClicked;
+  final VoidCallback menuClicked;
   final PageDestination destination;
 
-  HomePage(this.title, this.MenuClicked, {this.destination});
+  HomePage(
+    this.title, {
+    this.menuClicked,
+    this.destination,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,15 @@ class HomePage extends StatelessWidget {
                 return _HomeScreen(
                   destination: destination,
                   title: title,
+                  menuClicked: () {
+                    print("Clicked in home");
+                    this.menuClicked.call();
+                  },
                 );
               case ConstantsRoutes.HOME_CHAT_PAGE:
-                return ChatFragment(destination: destination);
+                return ChatFragment(
+                  destination: destination,
+                );
             }
           },
         );
@@ -39,11 +49,16 @@ class HomePage extends StatelessWidget {
 }
 
 class _HomeScreen extends StatelessWidget {
-  const _HomeScreen({Key key, this.title, this.menuClicked, this.destination})
-      : super(key: key);
+  const _HomeScreen({
+    Key key,
+    this.title,
+    this.menuClicked,
+    this.destination,
+  }) : super(key: key);
   final String title;
   //Call back to pass menu click event to the app base to open the app drawer
-  final Function() menuClicked;
+  final VoidCallback menuClicked;
+
   final PageDestination destination;
 
   @override
@@ -63,7 +78,9 @@ class _HomeScreen extends StatelessWidget {
               Icons.menu,
               color: Colors.grey.shade900,
             ),
-            onPressed: () {}),
+            onPressed: () {
+              this.menuClicked.call();
+            }),
       ),
       body: new Container(
         child: new Center(
@@ -91,8 +108,9 @@ class _HomeScreen extends StatelessWidget {
       ),
       //floatingActionButton: new IncreaseCountButton());
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            Navigator.of(context).pushNamed(ConstantsRoutes.HOME_CHAT_PAGE),
+        onPressed: () {
+          Navigator.of(context).pushNamed(ConstantsRoutes.HOME_CHAT_PAGE);
+        },
         child: Icon(Icons.chat),
       ),
       resizeToAvoidBottomInset: true,
