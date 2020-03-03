@@ -9,8 +9,8 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'home_page.dart';
 
 class AppBase extends StatefulWidget {
-  AppBase({Key key}) : super(key: key);
-
+  AppBase({Key key, this.isLoggedIn}) : super(key: key);
+  final isLoggedIn;
   @override
   _AppBaseState createState() => _AppBaseState();
 }
@@ -73,7 +73,7 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
         tapScaffoldEnabled: _tapScaffold,
 
         offset: IDOffset.horizontal(_offset),
-        swipe: !_swipe,
+        swipe: _swipe,
         boxShadow: _direction == InnerDrawerDirection.start &&
                 _animationType == InnerDrawerAnimation.linear
             ? []
@@ -81,7 +81,10 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
         colorTransition: currentColor,
         leftAnimationType: _animationType,
         rightAnimationType: InnerDrawerAnimation.linear,
-        leftChild: NavigationDrawer(dragUpdate: _dragUpdate),
+        leftChild: NavigationDrawer(
+          dragUpdate: _dragUpdate,
+          isSignedIn: widget.isLoggedIn,
+        ),
 
         //rightChild: MapFilterDrawer(),
 
@@ -93,12 +96,9 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
         scaffold: Scaffold(
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {},
-              label: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text("Chat Assist"),
-              ),
+              label: Text("Appointment"),
               icon: Icon(
-                Icons.chat,
+                Icons.add,
                 color: allDestinations[_index].materialColorLight,
               ),
             ),
@@ -134,9 +134,9 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
                   child: KeyedSubtree(
                     key: _destinationKeys[destination.index],
                     child: _index == 0
-                        ? HomePage(
-                            "Welcome",
-                          )
+                        ? HomePage("Welcome", () {
+                            _dragUpdate = 1.0;
+                          })
                         : DestinationView(
                             destination: destination,
                           ),
