@@ -133,18 +133,6 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return new WebviewScaffold(
-      url:
-          "https://webchat.snatchbot.me/e30deda7335903ce072120872201193e4e9dac8004f8f2c770a6e3cb297bf8de",
-      appBar: new AppBar(
-        title: const Text('Diga Assistant'),
-      ),
-      withZoom: true,
-      withLocalStorage: true,
-      hidden: true,
-      initialChild:
-          Center(child: Container(child: CircularProgressIndicator())),
-    );
     return Scaffold(
       extendBody: false,
       appBar: CupertinoNavigationBar(
@@ -169,7 +157,6 @@ class _ChatFragmentState extends State<ChatFragment> {
               inverted: false,
               onSend: onSend,
               user: user,
-
               inputDecoration: InputDecoration(hintText: "Add message here..."),
               dateFormat: DateFormat('yyyy-MMM-dd'),
               timeFormat: DateFormat('HH:mm'),
@@ -177,18 +164,6 @@ class _ChatFragmentState extends State<ChatFragment> {
               showUserAvatar: true,
               showAvatarForEveryMessage: false,
               scrollToBottom: true,
-              // inputFooterBuilder: () {
-              //   return Column(
-              //     children: [
-              //       Text('asd'),
-              //       Text('asd'),
-              //       Text('asd'),
-              //       Text('asd'),
-              //       Text('asd'),
-              //       Text('asd'),
-              //     ],
-              //   );
-              // },
               onPressAvatar: (ChatUser user) {
                 print("OnPressAvatar: ${user.name}");
               },

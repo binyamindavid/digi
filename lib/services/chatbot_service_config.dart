@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -9,6 +10,14 @@ class ChatbotServiceConfig {
   ChatbotServiceConfig(this.endPointUrl) {
     if (client == null) client = http.Client();
   }
+
+  ///Add the requured params for the conversation stream
+  ///The [user_id] should be unique
+  String userId = "Fjorde_${DateTime.now().millisecondsSinceEpoch}";
+
+  ///[message_id] only used when continuing a chat from a different platform,
+  ///default to 0
+  int messageId = 0;
   //api endpoint url, should be passed into the build proccess on the final build
   //for now, will be hard coded.
   final endPointUrl;
@@ -29,27 +38,28 @@ class ChatbotServiceConfig {
   sendMessage(ChatMessage message,
       {String url:
           'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91'}) async {
-    if (message.text != null)
+    if (message.text != null) {
+      print("Output @@@ ${message.text}");
       try {
-        if (client == null) client = http.Client();
+        var urlEP =
+            '${url}?user_id=${this.userId}&message_id=${this.messageId}';
+        // var client = new http.Client();
+        var request = new http.Request('POST', Uri.parse(urlEP));
+        var body = json.encode({'message': message.text});
+        request.headers[HttpHeaders.contentTypeHeader] =
+            'application/json; charset=utf-8';
 
-        var uriResponse = await client.post(url, body: {
-          'message': '${message.text}',
-          'user_id': 'nedle',
-          "first_name": "Heckt"
-        }).then((value) async {
-          Map<String, dynamic> botMessage;
-          print(value.headers);
-          print(value.body);
-
-          if (value.body != null) {
-            botMessage = jsonDecode(value.body);
-            print(botMessage);
-          }
-        });
+        request.body = body;
+        await client
+            .send(request)
+            .then((response) => response.stream
+                .bytesToString()
+                .then((value) => print(value.toString())))
+            .catchError((error) => print(error.toString()));
       } catch (e) {
         print("@@@error decoding:$e");
       }
+    }
   }
 
   ///must call when done to prevent memory leaks
