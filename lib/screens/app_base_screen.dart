@@ -22,8 +22,12 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
   bool _onTapToClose = false;
   bool _swipe = true;
   bool _tapScaffold = true;
+  bool _isChatEnabled = true;
   InnerDrawerAnimation _animationType = InnerDrawerAnimation.static;
   double _offset = 0.4;
+
+  AnimationController _controller;
+  Animation<double> _drawerState;
 
   double _dragUpdate = 0;
   int _index = 0;
@@ -44,7 +48,22 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
   @override
   void initState() {
     print("@@@@----MAIN____APPP____INIT___STATE");
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    _drawerState = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    _controller.addListener(() {
+      print("animating ${_drawerState.value}");
 
+      print("Clicked");
+      _direction = InnerDrawerDirection.start;
+      setState(() => _dragUpdate = _drawerState.value);
+    });
+    _drawerState.addListener(() {
+      setState(() {
+        print("Clicked");
+        this._dragUpdate = _drawerState.value;
+      });
+    });
     _faders =
         allDestinations.map<AnimationController>((PageDestination destination) {
       return AnimationController(
@@ -94,14 +113,16 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
         },
         //innerDrawerCallback: (a) => print(a),
         scaffold: Scaffold(
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: () {},
-              label: Text("Appointment"),
-              icon: Icon(
-                Icons.add,
-                color: allDestinations[_index].materialColorLight,
-              ),
-            ),
+            floatingActionButton: _isChatEnabled
+                ? null
+                : FloatingActionButton.extended(
+                    onPressed: () {},
+                    label: Text("Appointment"),
+                    icon: Icon(
+                      Icons.add,
+                      color: allDestinations[_index].materialColorLight,
+                    ),
+                  ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             extendBody: false,
@@ -134,9 +155,18 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
                   child: KeyedSubtree(
                     key: _destinationKeys[destination.index],
                     child: _index == 0
-                        ? HomePage("Welcome", () {
-                            _dragUpdate = 1.0;
-                          })
+                        ? HomePage(
+                            "Welcome",
+                            menuClicked: () {
+                              print("clicked in base");
+                              _controller.status == AnimationStatus.completed ||
+                                      _controller.status ==
+                                          AnimationStatus.reverse
+                                  ? _controller.forward()
+                                  : _controller.reverse();
+                              _controller.forward();
+                            },
+                          )
                         : DestinationView(
                             destination: destination,
                           ),
