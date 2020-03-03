@@ -22,8 +22,6 @@ class NavigationDrawer extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
-                // Add one stop for each color. Stops should increase from 0 to 1
-                //stops: [0.1, 0.5,0.5, 0.7, 0.9],
                 colors: [
                   ColorTween(
                     begin: Colors.blueAccent,

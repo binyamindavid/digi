@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:digamobile/services/chatbot_service_config.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:http/http.dart' as http;
 import 'package:dash_chat/dash_chat.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +40,8 @@ class _ChatFragmentState extends State<ChatFragment> {
     //}
   }
 
+  ChatbotServiceConfig _chatConfig;
+
   final ChatUser user = ChatUser(
     name: "Fayeed",
     uid: "123456789",
@@ -56,9 +60,11 @@ class _ChatFragmentState extends State<ChatFragment> {
   var i = 0;
 
   @override
-  void initState() {
+  Future<void> initState() {
     super.initState();
 
+    _chatConfig = ChatbotServiceConfig(
+        'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91');
     messages.addAll([
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
@@ -74,12 +80,13 @@ class _ChatFragmentState extends State<ChatFragment> {
   void systemMessage() {
     Timer(Duration(milliseconds: 300), () {
       if (i < 6) {
-        setState(() {
-          //messages = [...messages, m[i]];
-          messages = []
-            ..addAll(messages)
-            ..add(m[i]);
-        });
+        if (mounted) if (m.length > i)
+          setState(() {
+            messages = [...messages, m[i]];
+            // messages = []
+            //   ..addAll(messages)
+            //   ..add(m[i]);
+          });
         i++;
       }
       Timer(Duration(milliseconds: 300), () {
@@ -95,6 +102,7 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   void onSend(ChatMessage message) {
     print(message.toJson());
+    _chatConfig.sendMessage(message);
     // var documentReference = Firestore.instance
     //     .collection('messages')
     //     .document(DateTime.now().millisecondsSinceEpoch.toString());
@@ -125,6 +133,18 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   @override
   Widget build(BuildContext context) {
+    return new WebviewScaffold(
+      url:
+          "https://webchat.snatchbot.me/e30deda7335903ce072120872201193e4e9dac8004f8f2c770a6e3cb297bf8de",
+      appBar: new AppBar(
+        title: const Text('Diga Assistant'),
+      ),
+      withZoom: true,
+      withLocalStorage: true,
+      hidden: true,
+      initialChild:
+          Center(child: Container(child: CircularProgressIndicator())),
+    );
     return Scaffold(
       extendBody: false,
       appBar: CupertinoNavigationBar(
@@ -133,6 +153,8 @@ class _ChatFragmentState extends State<ChatFragment> {
         leading: IconButton(
             icon: Icon(CupertinoIcons.back),
             onPressed: () {
+              ///Dispose of the message streams and sinks as they are no longer needed
+              _chatConfig.dispose();
               if (Navigator.of(context).canPop()) Navigator.of(context).pop();
             }),
       ),
