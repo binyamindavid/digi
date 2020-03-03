@@ -1,4 +1,5 @@
 import 'package:digamobile/login_screen.dart';
+import 'package:digamobile/screens/app_base_screen.dart';
 import 'package:digamobile/screens/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,9 @@ class AuthenticationService extends StatelessWidget {
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return HomePage(title);
+              return AppBase(
+                isLoggedIn: true,
+              );
             } else {
               return LoginScreen();
             }
