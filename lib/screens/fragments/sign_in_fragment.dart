@@ -43,7 +43,7 @@ class _SigninFragmentState extends State<SigninFragment> {
       body: Center(
         child: Container(
           //height: 250.0,
-          width: 300.0,
+          width: 400.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
