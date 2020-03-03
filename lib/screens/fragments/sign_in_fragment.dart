@@ -71,6 +71,15 @@ class _SigninFragmentState extends State<SigninFragment> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 20.0, bottom: 5.0),
+                      child: Container(
+                        height: 120.0,
+                          child: Image.asset('images/diga_logo.png', width: 140, fit: BoxFit.cover)
+                      ),
+
+                    ),
+                    Padding(
                         padding: EdgeInsets.only(
                             left: 25.0, right: 25.0, top: 20.0, bottom: 5.0),
                         child: Container(
@@ -104,8 +113,9 @@ class _SigninFragmentState extends State<SigninFragment> {
                       padding: const EdgeInsets.all(15.0),
                       child: RaisedButton(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        color: Colors.deepOrange,
+                            borderRadius: BorderRadius.circular(30.0)),
+                        color: Colors.blue,
+                        elevation: 0.0,
                         onPressed: () {
                           if (checkFields()) {
                             AuthService().signIn(email, password,
@@ -114,8 +124,12 @@ class _SigninFragmentState extends State<SigninFragment> {
                         },
                         child: Container(
                           height: 40.0,
-                          width: 100.0,
-                          child: Center(child: Text('Sign in ')),
+                          width: 300.0,
+                          child: Center(
+                              child: Text(
+                            'Sign in ',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          )),
                         ),
                       ),
                     )
