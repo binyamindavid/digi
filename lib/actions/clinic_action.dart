@@ -1,19 +1,19 @@
-class AddClinic {
+class AddClinicAction {
   final payload;
 
-  AddClinic({this.payload});
+  AddClinicAction({this.payload});
 }
 
-class ListClinics {}
+class ListClinicsAction {}
 
-class UpdateClinic {
+class UpdateClinicAction {
   final payload;
 
-  UpdateClinic(this.payload);
+  UpdateClinicAction(this.payload);
 }
 
-class DestroyClinic {
+class DestroyClinicAction {
   final clinicId;
 
-  DestroyClinic(this.clinicId);
+  DestroyClinicAction(this.clinicId);
 }

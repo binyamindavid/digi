@@ -1,13 +1,15 @@
-class AddMessage {
+class AddMessageAction {
   final payload;
+  final notificationSink;
 
-  AddMessage(this.payload);
+  AddMessageAction(this.payload, this.notificationSink);
 }
 
-class AddAllMessages {
+class AddAllMessagesAction {
   final payload;
+  final notificationSink;
 
-  AddAllMessages(this.payload);
+  AddAllMessagesAction(this.payload, {this.notificationSink});
 }
 
-class DeleteAllMessages {}
+class DeleteAllMessagesAction {}
