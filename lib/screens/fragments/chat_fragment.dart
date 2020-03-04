@@ -93,13 +93,6 @@ class _ChatFragmentState extends State<ChatFragment> {
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
     messages.addAll([
       ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-      // ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
     ]);
   }
 
