@@ -20,7 +20,8 @@ class ChatbotServiceConfig {
     _botUser = ChatUser(
         uid: "dg-bot01",
         name: "Diga-Bot",
-        containerColor: Colors.lightBlue,
+        containerColor: Colors.white,
+        color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
   }
 

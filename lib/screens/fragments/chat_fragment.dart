@@ -43,10 +43,11 @@ class _ChatFragmentState extends State<ChatFragment> {
   ChatbotServiceConfig _chatConfig;
 
   final ChatUser user = ChatUser(
-    name: "Fayeed",
-    uid: "123456789",
-    avatar: "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
-  );
+      name: "Fayeed",
+      uid: "123456789",
+      avatar: "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
+      color: Colors.white,
+      containerColor: Colors.deepPurpleAccent);
 
   final ChatUser otherUser = ChatUser(
     name: "Mrfatty",
@@ -162,7 +163,7 @@ class _ChatFragmentState extends State<ChatFragment> {
               onSend: onSend,
               user: user,
               inputDecoration: InputDecoration(hintText: "Add message here..."),
-              dateFormat: DateFormat('yyyy-MMM-dd'),
+              dateFormat: DateFormat('dd-MMM-yyyy'),
               timeFormat: DateFormat('HH:mm'),
               messages: messages,
               showUserAvatar: true,
@@ -177,10 +178,35 @@ class _ChatFragmentState extends State<ChatFragment> {
               inputMaxLines: 5,
               alwaysShowSend: true,
               inputTextStyle: TextStyle(fontSize: 16.0),
+              inputToolbarPadding: EdgeInsets.only(left: 8.0),
+              inputToolbarMargin: EdgeInsets.all(4.0),
               inputContainerStyle: BoxDecoration(
-                border: Border.all(width: 0.0),
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(width: 0.3, color: Colors.black),
                 color: Colors.white,
               ),
+              messageContainerDecorationRecepient: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+              ),
+              messageContainerDecoration: BoxDecoration(
+                color: Colors.blue.shade700,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+              ),
+              quickReplyStyle: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(width: 0.3, color: Colors.black),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              quickReplyTextStyle: TextStyle(fontSize: 16),
               onQuickReply: (Reply reply) {
                 onSend(ChatMessage(
                     text: reply.title, createdAt: DateTime.now(), user: user));
@@ -200,7 +226,7 @@ class _ChatFragmentState extends State<ChatFragment> {
                       maxWidth: 400,
                     );
                   },
-                )
+                ),
               ],
             ),
           ),
