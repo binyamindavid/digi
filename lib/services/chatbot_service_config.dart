@@ -106,7 +106,7 @@ class ChatbotServiceConfig {
 
   ChatMessage configureChatMessage(ChatReponseModel response) {
     QuickReplies replies;
-    if (response.suggested.length > 0) {
+    if (response.suggested != null) if (response.suggested.length > 0) {
       List<Reply> reps = [];
       for (int i = 0; i < response.suggested.length; i++) {
         reps.add(Reply(

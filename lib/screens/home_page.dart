@@ -1,6 +1,3 @@
-import 'package:digamobile/auth_service.dart';
-import 'package:digamobile/containers/counter/counter.dart';
-import 'package:digamobile/containers/counter/increase_counter.dart';
 import 'package:digamobile/screens/fragments/chat_fragment.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:digamobile/styles/constants.dart';
@@ -89,16 +86,6 @@ class _HomeScreen extends StatelessWidget {
             children: <Widget>[
               Text('You are logged in'),
               SizedBox(height: 10.0),
-              // RaisedButton(
-              //   onPressed: () {
-              //     AuthService().signOut();
-              //   },
-              //   child: Center(
-              //     child: Text('Sign Out'),
-              //   ),
-              //   color: Colors.red,
-              // ),
-              //new Counter(),
             ],
           ),
         ),
