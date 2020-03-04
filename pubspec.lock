@@ -172,9 +172,11 @@ packages:
   dash_chat:
     dependency: "direct main"
     description:
-      name: dash_chat
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: d8edcf530bc5265900060e31e0ea589a30e81895
+      url: "git://github.com/David-solly/dash_chat.git"
+    source: git
     version: "1.0.16"
   firebase:
     dependency: transitive
