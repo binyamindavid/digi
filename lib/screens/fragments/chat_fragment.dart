@@ -135,28 +135,88 @@ class _ChatFragmentState extends State<ChatFragment> {
     });
   }
 
+  ///Set this [bool] flag to true to target ios changes- change it to false to targt android
+  ///the value can be set using target platform in the production version
+  bool _isIos = true;
+
   @override
   Widget build(BuildContext context) {
     AppState store = StoreProvider.of<AppState>(context).state;
     _chatConfig.set(store);
     return Scaffold(
       extendBody: false,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: Colors.white,
-        middle: Text(
-          "DiGA Assistant",
-          style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
-        ),
-        automaticallyImplyMiddle: true,
-        automaticallyImplyLeading: true,
-        leading: IconButton(
-            icon: Icon(CupertinoIcons.back),
-            onPressed: () {
-              ///Dispose of the message streams and sinks as they are no longer needed
-              _chatConfig.dispose();
-              if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-            }),
-      ),
+      appBar: _isIos
+          ?
+
+          ///Returns an [CupertinoNavigationBar] styled for the IOS platform
+          CupertinoNavigationBar(
+              backgroundColor: Colors.white,
+              middle: Text(
+                "DiGA Assistant",
+                style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+              ),
+              automaticallyImplyMiddle: true,
+              automaticallyImplyLeading: true,
+              leading: Container(
+                constraints: BoxConstraints(maxWidth: 80),
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Material(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        ///Dispose of the message streams and sinks as they are no longer needed
+                        _chatConfig.dispose();
+                        if (Navigator.of(context).canPop())
+                          Navigator.of(context).pop();
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            CupertinoIcons.back,
+                            color: Colors.blue,
+                            size: 22,
+                          ),
+                          Text(
+                            "back",
+                            style: TextStyle(fontSize: 18, color: Colors.blue),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          :
+
+          ///Returns an [AppBar] styled for the android platform
+          AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                "DiGA Assistant",
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              centerTitle: true,
+              automaticallyImplyLeading: true,
+              leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.grey.shade800,
+                  ),
+                  onPressed: () {
+                    ///Dispose of the message streams and sinks as they are no longer needed
+                    _chatConfig.dispose();
+                    if (Navigator.of(context).canPop())
+                      Navigator.of(context).pop();
+                  }),
+            ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
