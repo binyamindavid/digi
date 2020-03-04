@@ -62,22 +62,30 @@ class _HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: new AppBar(
-        centerTitle: true,
-        title: new Text(
+      appBar: new CupertinoNavigationBar(
+        automaticallyImplyMiddle: true,
+        middle: Text(
           this.title,
           style: TextStyle(color: Colors.grey.shade800, fontSize: 14),
         ),
         backgroundColor: Colors.white,
-        elevation: 0.0,
-        leading: IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.grey.shade900,
-            ),
-            onPressed: () {
-              this.menuClicked.call();
-            }),
+        leading: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Material(
+            clipBehavior: Clip.antiAlias,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            child: IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  color: Colors.grey.shade900,
+                ),
+                onPressed: () {
+                  this.menuClicked.call();
+                }),
+          ),
+        ),
       ),
       body: new Container(
         child: new Center(

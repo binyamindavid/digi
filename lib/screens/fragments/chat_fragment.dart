@@ -67,6 +67,16 @@ class _ChatFragmentState extends State<ChatFragment> {
         print(
             "@@@@@___________ Snapshot data ${message.message.text}_________@@@@");
 
+        ///Instantiates the messages if they are empty
+        if (messages == null) {
+          messages = [];
+        }
+
+        //Adds a message directly to the message stack if there are no other messages
+        if (messages.length < 1) {
+          systemMessage(message.message, message.delayMilliSeconds);
+          return;
+        }
         //Update the messages only if there are new messages
         if (message.message.id != messages.last.id) {
           systemMessage(message.message, message.delayMilliSeconds);
@@ -91,7 +101,6 @@ class _ChatFragmentState extends State<ChatFragment> {
     );
 
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
-
   }
 
   void systemMessage(message, duration) async {
@@ -133,6 +142,11 @@ class _ChatFragmentState extends State<ChatFragment> {
     return Scaffold(
       extendBody: false,
       appBar: CupertinoNavigationBar(
+        backgroundColor: Colors.white,
+        middle: Text(
+          "DiGA Assistant",
+          style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+        ),
         automaticallyImplyMiddle: true,
         automaticallyImplyLeading: true,
         leading: IconButton(
@@ -154,7 +168,8 @@ class _ChatFragmentState extends State<ChatFragment> {
               inverted: false,
               onSend: onSend,
               user: user,
-              inputDecoration: InputDecoration(hintText: "Add message here..."),
+              inputDecoration:
+                  InputDecoration(hintText: "Please type here ..."),
               dateFormat: DateFormat('dd-MMM-yyyy'),
               timeFormat: DateFormat('HH:mm'),
               messages: messages,
@@ -168,7 +183,7 @@ class _ChatFragmentState extends State<ChatFragment> {
                 print("OnLongPressAvatar: ${user.name}");
               },
               inputMaxLines: 5,
-              alwaysShowSend: true,
+              alwaysShowSend: false,
               inputTextStyle: TextStyle(fontSize: 16.0),
               inputToolbarPadding: EdgeInsets.only(left: 8.0),
               inputToolbarMargin: EdgeInsets.all(4.0),
