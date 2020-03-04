@@ -91,9 +91,7 @@ class _ChatFragmentState extends State<ChatFragment> {
     );
 
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
-    messages.addAll([
-      ChatMessage(text: "hello", user: user, createdAt: DateTime.now()),
-    ]);
+
   }
 
   void systemMessage(message, duration) async {
@@ -210,18 +208,18 @@ class _ChatFragmentState extends State<ChatFragment> {
               },
               shouldShowLoadEarlier: false,
               showTraillingBeforeSend: true,
-              trailing: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.photo),
-                  onPressed: () async {
-                    File result = await ImagePicker.pickImage(
-                      source: ImageSource.gallery,
-                      maxHeight: 400,
-                      maxWidth: 400,
-                    );
-                  },
-                ),
-              ],
+//              trailing: <Widget>[
+//                IconButton(
+//                  icon: Icon(Icons.photo),
+//                  onPressed: () async {
+//                    File result = await ImagePicker.pickImage(
+//                      source: ImageSource.gallery,
+//                      maxHeight: 400,
+//                      maxWidth: 400,
+//                    );
+//                  },
+//                ),
+//              ],
             ),
           ),
         ],
