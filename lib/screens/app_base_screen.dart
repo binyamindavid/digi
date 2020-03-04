@@ -126,26 +126,26 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             extendBody: false,
-            bottomNavigationBar: BottomNavigationBar(
-              //type: BottomNavigationBarType.fixed,
-              selectedIconTheme: IconThemeData(size: 26),
-              selectedItemColor: allDestinations[_index].materialColor,
-              unselectedItemColor: Colors.grey.shade900,
-              showUnselectedLabels: true,
-              onTap: (index) {
-                // navigatorKey.currentState.maybePop();
-                setState(() => _index = index);
-              },
-              currentIndex: _index,
-              items: allDestinations
-                  .map<BottomNavigationBarItem>((pageDestination) {
-                return BottomNavigationBarItem(
-                    icon: Icon(pageDestination.icon),
-                    activeIcon: Icon(pageDestination.activeIcon),
-                    backgroundColor: pageDestination.materialColor,
-                    title: Text(pageDestination.title));
-              }).toList(),
-            ),
+//            bottomNavigationBar: BottomNavigationBar(
+//              //type: BottomNavigationBarType.fixed,
+//              selectedIconTheme: IconThemeData(size: 26),
+//              selectedItemColor: allDestinations[_index].materialColor,
+//              unselectedItemColor: Colors.grey.shade900,
+//              showUnselectedLabels: true,
+//              onTap: (index) {
+//                // navigatorKey.currentState.maybePop();
+//                setState(() => _index = index);
+//              },
+//              currentIndex: _index,
+//              items: allDestinations
+//                  .map<BottomNavigationBarItem>((pageDestination) {
+//                return BottomNavigationBarItem(
+//                    icon: Icon(pageDestination.icon),
+//                    activeIcon: Icon(pageDestination.activeIcon),
+//                    backgroundColor: pageDestination.materialColor,
+//                    title: Text(pageDestination.title));
+//              }).toList(),
+//            ),
             body: Stack(
               fit: StackFit.expand,
               children: allDestinations.map((PageDestination destination) {

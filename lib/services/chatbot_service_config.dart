@@ -13,7 +13,7 @@ class ChatbotServiceConfig {
   ChatbotServiceConfig(this.endPointUrl,
       {this.store,
       this.chatbotAvatarLink:
-          "https://dvgpba5hywmpo.cloudfront.net/media/image/7y3hB8o4qbBA1emMcCIMpkZnm"}) {
+          "https://dvgpba5hywmpo.cloudfront.net/media/image/yfYvrEPJjnR3rGpZiC6BMLRKu"}) {
     if (client == null) client = http.Client();
 
     //Initialise the bot user
@@ -23,19 +23,21 @@ class ChatbotServiceConfig {
         containerColor: Colors.white,
         color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
+
+        emitNewMessage(new ChatUiMessage(message: ChatMessage(text: "Welcome to DiGA assistant. Please type to proceed", user: _botUser, createdAt: DateTime.now())));
   }
 
-  ///A reference to the global redux [AppState] store to retrive username and other config values
+  ///A reference to the global redux [AppState] store to retrieve username and other config values
   ///Cannot be null
   AppState store;
   String chatbotAvatarLink;
 
   set(state) => store;
 
-  ///The [ChatUser] refrence for the chatbot to display in the chat ui
+  ///The [ChatUser] reference for the chatbot to display in the chat ui
   ChatUser _botUser;
 
-  ///Add the requured params for the conversation stream
+  ///Add the requred params for the conversation stream
   ///The [user_id] should be unique
   String userId = "Fjorde_${DateTime.now().millisecondsSinceEpoch}";
 
@@ -62,7 +64,7 @@ class ChatbotServiceConfig {
 
   sendMessage(ChatMessage message,
       {String url:
-          'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91'}) async {
+          'https://account.snatchbot.me/channels/api/api/id92285/appmoozenhq/apseyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'}) async {
     if (message.text != null) {
       print("Output @@@ ${message.text}");
       try {
