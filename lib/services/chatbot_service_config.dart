@@ -13,7 +13,7 @@ class ChatbotServiceConfig {
   ChatbotServiceConfig(this.endPointUrl,
       {this.store,
       this.chatbotAvatarLink:
-          "https://dvgpba5hywmpo.cloudfront.net/media/image/yfYvrEPJjnR3rGpZiC6BMLRKu"}) {
+          "https://res.cloudinary.com/lofdwwlay/image/upload/v1583326629/digi_pic_ou1hz6.jpg"}) {
     if (client == null) client = http.Client();
 
     //Initialise the bot user
