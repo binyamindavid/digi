@@ -25,31 +25,9 @@ class ChatFragment extends StatefulWidget {
 class _ChatFragmentState extends State<ChatFragment> {
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
-  File _image;
-
-  // Future getImage() async {
-  //   // PermissionStatus permissionResult =
-  //   //     await SimplePermissions.requestPermission(
-  //   //         Permission.WriteExternalStorage);
-  //   // if (permissionResult == PermissionStatus.authorized) {
-  //   //   // code of read or write file in external storage (SD card)
-
-  //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-  //   setState(() {
-  //     _image = image;
-  //   });
-  //   //}
-  // }
-
   ChatbotServiceConfig _chatConfig;
 
   ChatUser user;
-
-  final ChatUser otherUser = ChatUser(
-    name: "Mrfatty",
-    uid: "25649654",
-  );
 
   List<ChatMessage> messages = List<ChatMessage>();
 
@@ -70,12 +48,14 @@ class _ChatFragmentState extends State<ChatFragment> {
 
         //Adds a message directly to the message stack if there are no other messages
         if (messages.length < 1) {
-          systemMessage(message.message, message.delayMilliSeconds);
+          systemMessage(message.message, message.delayMilliSeconds,
+              isLast: message.isLastMessage);
           return;
         }
         //Update the messages only if there are new messages
         if (message.message.id != messages.last.id) {
-          systemMessage(message.message, message.delayMilliSeconds);
+          systemMessage(message.message, message.delayMilliSeconds,
+              isLast: message.isLastMessage);
           //messages = [...messages, message.message];
         }
       }
@@ -97,24 +77,20 @@ class _ChatFragmentState extends State<ChatFragment> {
     );
 
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
-    _chatConfig.chatBotNotifyMessageStream.listen((event) {
-      print("@@@@@___________ Snapshot data ${event}_________@@@@");
-      setState(() {
-        this.isTyping = true;
-      });
-    });
   }
 
   bool isTyping = true;
-  void systemMessage(message, duration) async {
+  void systemMessage(message, duration, {isLast: false}) {
     print("Adding message $message duration = $duration");
-
+    //_chatConfig.notifySink.add(true);
     Timer(Duration(milliseconds: duration ?? 0), () {
+      print("Finished typing");
       if (mounted)
         setState(() {
           messages = [...messages, message];
-          isTyping = false;
         });
+
+      _chatConfig.notifySink.add(false);
 
       Timer(Duration(milliseconds: 300), () {
         _chatViewKey.currentState.scrollController
@@ -123,6 +99,9 @@ class _ChatFragmentState extends State<ChatFragment> {
             curve: Curves.easeOut,
             duration: const Duration(milliseconds: 300),
           );
+        if (isLast == false) {
+          _chatConfig.notifySink.add(true);
+        }
       });
     });
   }
@@ -154,6 +133,7 @@ class _ChatFragmentState extends State<ChatFragment> {
     }
 
     if (_chatConfig.store == null) _chatConfig.set(store);
+    _chatConfig.context = context;
 
     if (user == null)
       user = ChatUser(
@@ -326,29 +306,39 @@ class _ChatFragmentState extends State<ChatFragment> {
               ),
             ],
           ),
-          isTyping
-              ? Positioned(
-                  top: 0,
-                  left: 10,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Assistant is typing ...",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ))
-              : Container(
+          StreamBuilder<bool>(
+              stream: _chatConfig.chatBotNotifyMessageStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                print(snapshot.data);
+                if (snapshot.data) {
+                  isTyping = snapshot.data;
+                  if (isTyping)
+                    return Positioned(
+                        top: 0,
+                        left: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Assistant is typing ...",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ));
+                }
+
+                return Container(
                   height: 0,
                   width: 0,
-                )
+                );
+              })
         ],
       ),
     );

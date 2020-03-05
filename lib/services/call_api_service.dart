@@ -5,6 +5,7 @@ import 'package:digamobile/actions/auth_actions.dart';
 import 'package:digamobile/models/api_specific_models/diga_api_patient_model.dart';
 import 'package:digamobile/models/app_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
@@ -80,7 +81,7 @@ class CallApi {
     }
   }
 
-  postMessages(email, {store, String url}) async {
+  postMessages(email, {store, String url, context}) async {
     ///[AppState] cannot be null, if not, throws an error
     assert(this.store != null, "Store is null");
 
@@ -114,7 +115,7 @@ class CallApi {
               (response) => response.stream.bytesToString().then(
                 (value) {
                   print(value.toString());
-
+                  Navigator.of(context).maybePop();
                   if (value == null) {
                     return;
                   }
