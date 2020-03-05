@@ -26,12 +26,16 @@ class ChatbotServiceConfig {
         containerColor: Colors.white,
         color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
-    _internalMessageNotifyStreamSink.add(true);
-    emitNewMessage(new ChatUiMessage(
-        message: ChatMessage(
-            text: "Welcome to DiGA assistant. Please type to proceed",
-            user: _botUser,
-            createdAt: DateTime.now())));
+    //_internalMessageNotifyStreamSink.add(true);
+    emitNewMessage(
+      new ChatUiMessage(
+          message: ChatMessage(
+              text: "Welcome to DiGA assistant. Please type to proceed",
+              user: _botUser,
+              createdAt: DateTime.now()),
+          delayMilliSeconds: 500,
+          isLastMessage: true),
+    );
   }
 
   ///A reference to the global redux [AppState] store to retrieve username and other config values
@@ -39,7 +43,9 @@ class ChatbotServiceConfig {
   Store<AppState> store;
   String chatbotAvatarLink;
 
-  set(state) => store;
+  void set(state) => store;
+
+  BuildContext context;
 
   ///The [ChatUser] reference for the chatbot to display in the chat ui
   ChatUser _botUser;
@@ -83,6 +89,8 @@ class ChatbotServiceConfig {
   StreamSink get _internalMessageNotifyStreamSink =>
       _isTypeingStreamController.sink;
 
+  StreamSink notifySink;
+
   ///[int] milliseconds to wait while displaying user is typing prompt
   int _millisToWait = 0;
 
@@ -101,7 +109,7 @@ class ChatbotServiceConfig {
 
       if (!sentMessagesFlag) if (message.text.contains("END")) {
         CallApi(store: this.store)
-            .postMessages(this.store.state.currentUser.email);
+            .postMessages(this.store.state.currentUser.email, context: context);
         sentMessagesFlag = true;
       }
       try {
@@ -140,17 +148,20 @@ class ChatbotServiceConfig {
     return response;
   }
 
-  emitNewMessage(ChatUiMessage message, {bool last: false}) async {
-    //_internalMessageNotifyStreamSink.add(true);
-    await Timer(Duration(milliseconds: message.delayMilliSeconds), () {
+  emitNewMessage(
+    ChatUiMessage message,
+  ) async {
+    if (notifySink == null) {
+      notifySink = _internalMessageNotifyStreamSink;
+    }
+    _internalMessageNotifyStreamSink.add(true);
+    Timer(Duration(milliseconds: message.delayMilliSeconds), () {
       print("Emitting messages ${message.message}");
       if (store != null)
         this.store.dispatch(AddMessageAction(payload: message.message));
       _internalMessageStreamSink.add(message);
       _millisToWait -= message.delayMilliSeconds;
       _millisToWait < 0 ? _millisToWait = 0 : null;
-
-      //_internalMessageNotifyStreamSink.add(true);
     });
   }
 
@@ -203,11 +214,11 @@ class ChatbotServiceConfig {
         _internalMessageNotifyStreamSink.add(true);
         _millisToWait += response.messages.last.message.length * 15;
         await emitNewMessage(
-            new ChatUiMessage(
+          new ChatUiMessage(
               message: configureChatMessage(response),
               delayMilliSeconds: _millisToWait,
-            ),
-            last: true);
+              isLastMessage: true),
+        );
         _millisToWait = 0;
       } else {
         _internalMessageNotifyStreamSink.add(true);
@@ -238,5 +249,10 @@ class ChatUiMessage {
   ///To give the 'bot is typing' effect
   final int delayMilliSeconds;
 
-  ChatUiMessage({@required this.message, this.delayMilliSeconds: 0});
+  final isLastMessage;
+
+  ChatUiMessage(
+      {this.isLastMessage: false,
+      @required this.message,
+      this.delayMilliSeconds: 0});
 }
