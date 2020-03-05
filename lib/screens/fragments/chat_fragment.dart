@@ -69,10 +69,6 @@ class _ChatFragmentState extends State<ChatFragment> {
           messages = [];
         }
 
-        setState(() {
-          isTyping = true;
-        });
-
         //Adds a message directly to the message stack if there are no other messages
         if (messages.length < 1) {
           systemMessage(message.message, message.delayMilliSeconds);
@@ -102,13 +98,19 @@ class _ChatFragmentState extends State<ChatFragment> {
     );
 
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
+    _chatConfig.chatBotNotifyMessageStream.listen((event) {
+      print("@@@@@___________ Snapshot data ${event}_________@@@@");
+      setState(() {
+        this.isTyping = true;
+      });
+    });
   }
 
   bool isTyping = false;
   void systemMessage(message, duration) async {
-    print("Adding message $message");
+    print("Adding message $message duration = $duration");
 
-    Timer(Duration(milliseconds: duration), () {
+    Timer(Duration(milliseconds: duration ?? 0), () {
       if (mounted)
         setState(() {
           messages = [...messages, message];
@@ -148,7 +150,6 @@ class _ChatFragmentState extends State<ChatFragment> {
   @override
   Widget build(BuildContext context) {
     Store<AppState> store = StoreProvider.of<AppState>(context);
-    print("@@@@@@------- user from store ${store.state.currentUser.email}");
     if (_callApi == null) {
       _callApi = CallApi(store: store);
     }
