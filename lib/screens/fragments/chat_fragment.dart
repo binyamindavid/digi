@@ -106,7 +106,7 @@ class _ChatFragmentState extends State<ChatFragment> {
     });
   }
 
-  bool isTyping = false;
+  bool isTyping = true;
   void systemMessage(message, duration) async {
     print("Adding message $message duration = $duration");
 
@@ -153,7 +153,8 @@ class _ChatFragmentState extends State<ChatFragment> {
     if (_callApi == null) {
       _callApi = CallApi(store: store);
     }
-    _chatConfig.set(store);
+
+    if (_chatConfig.store == null) _chatConfig.set(store);
 
     if (user == null)
       user = ChatUser(

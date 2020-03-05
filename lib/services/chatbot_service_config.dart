@@ -141,7 +141,7 @@ class ChatbotServiceConfig {
   }
 
   emitNewMessage(ChatUiMessage message, {bool last: false}) async {
-    _internalMessageNotifyStreamSink.add(true);
+    //_internalMessageNotifyStreamSink.add(true);
     await Timer(Duration(milliseconds: message.delayMilliSeconds), () {
       print("Emitting messages ${message.message}");
       if (store != null)
@@ -150,7 +150,7 @@ class ChatbotServiceConfig {
       _millisToWait -= message.delayMilliSeconds;
       _millisToWait < 0 ? _millisToWait = 0 : null;
 
-      _internalMessageNotifyStreamSink.add(!last);
+      //_internalMessageNotifyStreamSink.add(true);
     });
   }
 
@@ -195,12 +195,12 @@ class ChatbotServiceConfig {
     }
 
     int CardsInResponse = response.cards.length;
-    _internalMessageNotifyStreamSink.add(true);
 
     ///First issue the text based messages to the stream
     ///Iterates over the messages and emits them one at a time
     for (int i = 0; i < messagesInResponse; i++) {
       if (i == messagesInResponse - 1) {
+        _internalMessageNotifyStreamSink.add(true);
         _millisToWait += response.messages.last.message.length * 15;
         await emitNewMessage(
             new ChatUiMessage(
@@ -210,6 +210,7 @@ class ChatbotServiceConfig {
             last: true);
         _millisToWait = 0;
       } else {
+        _internalMessageNotifyStreamSink.add(true);
         _millisToWait += response.messages[i].message.length * 15;
         await emitNewMessage(new ChatUiMessage(
             message: ChatMessage(
