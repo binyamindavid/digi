@@ -65,9 +65,6 @@ class ChatbotServiceConfig {
   ///that is used to pass data to all listeners
   StreamSink get _internalMessageStreamSink => _apiStreamController.sink;
 
-  String debugUrl =
-      'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91';
-  bool _debugMode = true;
   sendMessage(ChatMessage message,
       {store,
       String url:
