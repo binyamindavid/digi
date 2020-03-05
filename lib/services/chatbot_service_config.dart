@@ -80,7 +80,7 @@ class ChatbotServiceConfig {
       print("Output @@@ ${message.text}");
       try {
         var urlEP =
-            '${debugUrl}?user_id=${this.userId}&message_id=${this.messageId}';
+            '${url}?user_id=${this.userId}&message_id=${this.messageId}';
 
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({
@@ -141,8 +141,10 @@ class ChatbotServiceConfig {
   ///A workaround since the snatchbot platform doesn't receive variables directly from post calls
   void sendUserDataToBot() {
     assert(store != null, "Store is null");
-    sendMessage(
-        ChatMessage(text: store.patientData.firstName ?? "", user: null));
+    sendMessage(ChatMessage(
+        text:
+            '${store.patientData.firstName ?? ""} ${store.patientData.lastName ?? ""}',
+        user: null));
   }
 
   void deliverToUi(ChatReponseModel response) {
