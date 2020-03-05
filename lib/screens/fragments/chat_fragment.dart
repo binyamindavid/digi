@@ -8,7 +8,6 @@ import 'package:dash_chat/dash_chat.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:redux/redux.dart';
 //import 'package:image_picker/image_picker.dart';
 
