@@ -24,7 +24,11 @@ class ChatbotServiceConfig {
         color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
 
-        emitNewMessage(new ChatUiMessage(message: ChatMessage(text: "Welcome to DiGA assistant. Please type to proceed", user: _botUser, createdAt: DateTime.now())));
+    emitNewMessage(new ChatUiMessage(
+        message: ChatMessage(
+            text: "Welcome to DiGA assistant. Please type to proceed",
+            user: _botUser,
+            createdAt: DateTime.now())));
   }
 
   ///A reference to the global redux [AppState] store to retrieve username and other config values
@@ -62,17 +66,27 @@ class ChatbotServiceConfig {
   ///that is used to pass data to all listeners
   StreamSink get _internalMessageStreamSink => _apiStreamController.sink;
 
+  String debugUrl =
+      'https://account.snatchbot.me/channels/api/api/id94441/appcom.moozenhq.digamobile/apsF58DCEC4F87FBF5BFADE9F5D56F91';
+  bool _debugMode = true;
   sendMessage(ChatMessage message,
-      {String url:
+      {store,
+      String url:
           'https://account.snatchbot.me/channels/api/api/id92285/appmoozenhq/apseyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'}) async {
+    //set the store reference
+    if (store != null) {
+      if (this.store == null) this.store = store;
+    }
     if (message.text != null) {
       print("Output @@@ ${message.text}");
       try {
         var urlEP =
-            '${url}?user_id=${this.userId}&message_id=${this.messageId}';
+            '${debugUrl}?user_id=${this.userId}&message_id=${this.messageId}';
 
         var request = new http.Request('POST', Uri.parse(urlEP));
-        var body = json.encode({'message': message.text});
+        var body = json.encode({
+          'message': message.text,
+        });
         request.headers[HttpHeaders.contentTypeHeader] =
             'application/json; charset=utf-8';
 
@@ -124,9 +138,24 @@ class ChatbotServiceConfig {
         quickReplies: replies ?? QuickReplies());
   }
 
+  ///This method is used to pass the username to the bot for further interactions
+  ///A workaround since the snatchbot platform doesn't receive variables directly from post calls
+  void sendUserDataToBot() {
+    assert(store != null, "Store is null");
+    sendMessage(ChatMessage(text: store.currentUser.email, user: null));
+  }
+
   void deliverToUi(ChatReponseModel response) {
     int messagesInResponse = response.messages.length;
     print("messages in response $messagesInResponse");
+
+    //check if the message is form data
+    if (messagesInResponse > 0) {
+      if (response.messages.first.message.contains("-----------------")) {
+        sendUserDataToBot();
+        return;
+      }
+    }
 
     int CardsInResponse = response.cards.length;
 

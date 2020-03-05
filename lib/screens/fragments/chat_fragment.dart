@@ -122,9 +122,9 @@ class _ChatFragmentState extends State<ChatFragment> {
     });
   }
 
-  void onSend(ChatMessage message) {
+  void onSend(ChatMessage message, {store}) {
     print(message.toJson());
-    _chatConfig.sendMessage(message);
+    _chatConfig.sendMessage(message, store: store);
 
     setState(() {
       //messages = [...messages, message];
@@ -142,7 +142,8 @@ class _ChatFragmentState extends State<ChatFragment> {
   @override
   Widget build(BuildContext context) {
     AppState store = StoreProvider.of<AppState>(context).state;
-    _chatConfig.set(store);
+    print("@@@@@@------- user from store ${store.currentUser.email}");
+
     return Scaffold(
       extendBody: false,
       appBar: _isIos
@@ -226,7 +227,9 @@ class _ChatFragmentState extends State<ChatFragment> {
               height: MediaQuery.of(context).size.height - 120.0,
               key: _chatViewKey,
               inverted: false,
-              onSend: onSend,
+              onSend: (message) {
+                onSend(message, store: store);
+              },
               user: user,
               inputDecoration:
                   InputDecoration(hintText: "Please type here ..."),
