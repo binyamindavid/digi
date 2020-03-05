@@ -10,7 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
 
 class CallApi {
-  CallApi({this.endPointUrl: 'https://diga-api.herokuapp.com/api/'});
+  CallApi(
+      {this.endPointUrl: 'https://diga-api.herokuapp.com/api', this.store}) {
+    if (client == null) client = http.Client();
+  }
 
   final endPointUrl;
   http.Client client;
@@ -33,6 +36,8 @@ class CallApi {
 
       try {
         var urlEP = '${url ?? endPointUrl}/profile?email=$email';
+
+        print("@@@ ----  $urlEP");
 
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({
@@ -72,7 +77,7 @@ class CallApi {
       } catch (e) {
         print("@@@error decoding:$e");
       } finally {
-        client.close();
+        if (client != null) client.close();
       }
     }
   }

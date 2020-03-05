@@ -54,7 +54,6 @@ class ChatbotServiceConfig {
   http.Client client;
 
   ///[StreamController] Controls the stream and Sink for [ChatUiMessage] api
-
   StreamController<ChatUiMessage> _apiStreamController =
       StreamController<ChatUiMessage>();
 

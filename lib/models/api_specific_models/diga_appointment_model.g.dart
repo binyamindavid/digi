@@ -11,8 +11,8 @@ DigaAppointmentModel _$DigaAppointmentModelFromJson(Map<String, dynamic> json) {
     appointmentID: json['id'] as int,
     appointmentDate: json['appointment_date'] as String ?? '',
     appointmentTime: json['appointment_time'] as String ?? '',
-    patientID: json['patient_id'] as String,
-    clinicID: json['clinic_id'] as String,
+    patientID: json['patient_id'] as int,
+    clinicID: json['clinic_id'] as int,
     createdDate: json['created_at'] as String ?? '',
     updateDate: json['updated_at'] as String ?? '',
   );

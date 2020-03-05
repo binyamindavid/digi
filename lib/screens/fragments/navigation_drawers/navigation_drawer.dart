@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:digamobile/models/app_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:redux/redux.dart';
 
 import '../../../auth_service.dart';
 
@@ -11,8 +14,12 @@ class NavigationDrawer extends StatelessWidget {
   final double dragUpdate;
   final isSignedIn;
   final hasRated = false;
+
   @override
   Widget build(BuildContext context) {
+    ///A reference to the global redux [AppState] store to retrieve username and other config values
+    ///Cannot be null
+    Store<AppState> store = StoreProvider.of<AppState>(context);
     return Container(
       child: Material(
           child: Stack(
@@ -46,29 +53,38 @@ class NavigationDrawer extends StatelessWidget {
                       children: <Widget>[
                         Column(
                           children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(
-                                  left: 10, bottom: 15, top: 72),
-                              width: 80,
-                              child: ClipRRect(
-                                child: Container(
-                                  height: 90,
-                                  width: 90,
-                                  color: Colors.blue[50],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: 10, bottom: 15, top: 72),
+                                  width: 80,
+                                  child: ClipRRect(
+                                    child: Container(
+                                      height: 90,
+                                      width: 90,
+                                      color: Colors.blue[50],
+                                    ),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
+                              ],
                             ),
                             Text(
-                              "Yohanne Smit",
+                              store.state.patientData != null
+                                  ? store.state.patientData.firstName != "" &&
+                                          store.state.patientData.lastName != ""
+                                      ? '${store.state.patientData.firstName ?? ""} ${store.state.patientData.lastName ?? ""}'
+                                      : "No patient record"
+                                  : "Yohanne Smit",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
                             )
                           ],
-                          //mainAxisAlignment: MainAxisAlignment.center,
                         ),
                         //Padding(
-                          //padding: EdgeInsets.all(10),
+                        //padding: EdgeInsets.all(10),
                         //),
                         // Material(
                         //   color: Colors.transparent,

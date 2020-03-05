@@ -29,9 +29,6 @@ class AuthenticationService extends StatelessWidget {
               print("@@@@@----username from firebase ${data.toString()}");
               store.dispatch(SaveInformationOnLogin(payload: data));
 
-              CallApi _apiPatientData = CallApi();
-              _apiPatientData.getPatientDetail(data.email, store: store);
-
               return AppBase(
                 isLoggedIn: true,
               );

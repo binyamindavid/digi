@@ -1,10 +1,14 @@
+import 'package:digamobile/models/app_state.dart';
 import 'package:digamobile/screens/fragments/navigation_drawers/navigation_drawer.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
+import 'package:digamobile/services/call_api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:redux/redux.dart';
 
 import 'home_page.dart';
 
@@ -83,8 +87,22 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  ///[CallApi] reference to make initial api calls to get client data
+  CallApi _apiPatientData;
+
+  ///A reference to the global redux [AppState] store to retrieve username and other config values
+  ///Cannot be null
+  Store<AppState> store;
+
   @override
   Widget build(BuildContext context) {
+    var store = StoreProvider.of<AppState>(context);
+    if (store.state.patientData == null) {
+      _apiPatientData = CallApi(store: store);
+      _apiPatientData.getPatientDetail(store.state.currentUser.email,
+          store: store);
+    }
+
     return Scaffold(
       body: InnerDrawer(
         key: _innerDrawerKey,

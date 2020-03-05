@@ -27,9 +27,9 @@ class DigaAppointmentModel {
       includeIfNull: false)
   final String appointmentTime;
   @JsonKey(name: "patient_id", nullable: true, includeIfNull: false)
-  final String patientID;
+  final int patientID;
   @JsonKey(name: "clinic_id", nullable: true, includeIfNull: false)
-  final String clinicID;
+  final int clinicID;
   @JsonKey(
       name: "created_at",
       defaultValue: "",
