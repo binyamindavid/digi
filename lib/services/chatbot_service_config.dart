@@ -26,7 +26,6 @@ class ChatbotServiceConfig {
         containerColor: Colors.white,
         color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
-    _internalMessageNotifyStreamSink.add(true);
     emitNewMessage(new ChatUiMessage(
         message: ChatMessage(
             text: "Welcome to DiGA assistant. Please type to proceed",
@@ -71,18 +70,6 @@ class ChatbotServiceConfig {
   ///that is used to pass data to all listeners
   StreamSink get _internalMessageStreamSink => _apiStreamController.sink;
 
-  ///[StreamController] Controls the stream and Sink for [bool] is typing effect api
-  StreamController<bool> _isTypeingStreamController = StreamController<bool>();
-
-  ///[chatBotNotifyMessageStream] is a [Stream]that will be subscribed to by any listeners
-  ///emmits is typing flag from this api that are passed into the internal [StreamSink]
-  Stream get chatBotNotifyMessageStream => _isTypeingStreamController.stream;
-
-  ///[_internalMessageNotifyStreamSink] is the internal  [StreamSink]
-  ///that is used to pass data to all listeners
-  StreamSink get _internalMessageNotifyStreamSink =>
-      _isTypeingStreamController.sink;
-
   ///[int] milliseconds to wait while displaying user is typing prompt
   int _millisToWait = 0;
 
@@ -97,7 +84,7 @@ class ChatbotServiceConfig {
 
     this.store.dispatch(AddMessageAction(payload: message));
     if (message.text != null) {
-      print("Output @@@ ${message.text}");
+      // print("Output @@@ ${message.text}");
 
       if (!sentMessagesFlag) if (message.text.contains("END")) {
         CallApi(store: this.store)
@@ -121,7 +108,7 @@ class ChatbotServiceConfig {
             .then(
               (response) => response.stream.bytesToString().then(
                 (value) {
-                  print(value.toString());
+                  // print(value.toString());
 
                   deliverToUi(mapJsonToChatResponseModel(json.decode(value)));
                 },
@@ -135,23 +122,18 @@ class ChatbotServiceConfig {
   }
 
   ChatReponseModel mapJsonToChatResponseModel(Map json) {
-    print("@@@@ ---- decoded $json");
+    // print("@@@@ ---- decoded $json");
     ChatReponseModel response = ChatReponseModel.fromJson(json);
     return response;
   }
 
-  emitNewMessage(ChatUiMessage message, {bool last: false}) async {
-    _internalMessageNotifyStreamSink.add(true);
-    await Timer(Duration(milliseconds: message.delayMilliSeconds), () {
-      print("Emitting messages ${message.message}");
-      if (store != null)
-        this.store.dispatch(AddMessageAction(payload: message.message));
-      _internalMessageStreamSink.add(message);
-      _millisToWait -= message.delayMilliSeconds;
-      _millisToWait < 0 ? _millisToWait = 0 : null;
-
-      _internalMessageNotifyStreamSink.add(!last);
-    });
+  emitNewMessage(ChatUiMessage message, {bool last: false}) {
+    // print("Emitting messages ${message.message}");
+    if (store != null)
+      this.store.dispatch(AddMessageAction(payload: message.message));
+    _internalMessageStreamSink.add(message);
+    _millisToWait -= message.delayMilliSeconds;
+    _millisToWait < 0 ? _millisToWait = 0 : null;
   }
 
   ChatMessage configureChatMessage(ChatReponseModel response) {
@@ -184,7 +166,7 @@ class ChatbotServiceConfig {
 
   void deliverToUi(ChatReponseModel response) async {
     int messagesInResponse = response.messages.length;
-    print("messages in response $messagesInResponse");
+    //print("messages in response $messagesInResponse");
 
     //check if the message is form data
     if (messagesInResponse > 0) {
@@ -213,7 +195,7 @@ class ChatbotServiceConfig {
         await emitNewMessage(new ChatUiMessage(
             message: ChatMessage(
                 text: response.messages[i].message, user: _botUser, id: "$i"),
-            delayMilliSeconds: response.messages[i].message.length * 15));
+            delayMilliSeconds: _millisToWait));
       }
     }
   }

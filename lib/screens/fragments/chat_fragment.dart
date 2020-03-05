@@ -69,6 +69,10 @@ class _ChatFragmentState extends State<ChatFragment> {
           messages = [];
         }
 
+        setState(() {
+          isTyping = true;
+        });
+
         //Adds a message directly to the message stack if there are no other messages
         if (messages.length < 1) {
           systemMessage(message.message, message.delayMilliSeconds);
@@ -100,12 +104,15 @@ class _ChatFragmentState extends State<ChatFragment> {
     _chatConfig.chatBotMessageStream.listen(_onMessageReceived);
   }
 
+  bool isTyping = false;
   void systemMessage(message, duration) async {
     print("Adding message $message");
+
     Timer(Duration(milliseconds: duration), () {
       if (mounted)
         setState(() {
           messages = [...messages, message];
+          isTyping = false;
         });
 
       Timer(Duration(milliseconds: 300), () {
@@ -318,37 +325,29 @@ class _ChatFragmentState extends State<ChatFragment> {
               ),
             ],
           ),
-          StreamBuilder<bool>(
-              stream: _chatConfig.chatBotNotifyMessageStream,
-              initialData: false,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data == true) {
-                    return Positioned(
-                        top: 0,
-                        left: 10,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Assistant is typing ...",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ));
-                  }
-                }
-                return Container(
+          isTyping
+              ? Positioned(
+                  top: 0,
+                  left: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Assistant is typing ...",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ))
+              : Container(
                   height: 0,
                   width: 0,
-                );
-              })
+                )
         ],
       ),
     );
