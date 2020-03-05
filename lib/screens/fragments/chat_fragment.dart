@@ -45,12 +45,7 @@ class _ChatFragmentState extends State<ChatFragment> {
 
   ChatbotServiceConfig _chatConfig;
 
-  final ChatUser user = ChatUser(
-      name: "Fayeed",
-      uid: "123456789",
-      avatar: "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
-      color: Colors.white,
-      containerColor: Colors.deepPurpleAccent);
+  ChatUser user;
 
   final ChatUser otherUser = ChatUser(
     name: "Mrfatty",
@@ -152,6 +147,19 @@ class _ChatFragmentState extends State<ChatFragment> {
     }
     _chatConfig.set(store);
 
+    if (user == null)
+      user = ChatUser(
+          name: store.state.patientData != null
+              ? store.state.patientData.firstName != "" &&
+                      store.state.patientData.lastName != ""
+                  ? '${store.state.patientData.firstName ?? ""} ${store.state.patientData.lastName ?? ""}'
+                  : "No patient record"
+              : "Patient",
+          uid: "123456789",
+          avatar:
+              "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
+          color: Colors.white,
+          containerColor: Colors.deepPurpleAccent);
     return Scaffold(
       extendBody: false,
       appBar: _isIos
@@ -177,11 +185,14 @@ class _ChatFragmentState extends State<ChatFragment> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
+                        if (!_chatConfig.sentMessagesFlag)
+                          _callApi.postMessages(store.state.currentUser.email);
+
                         ///Dispose of the message streams and sinks as they are no longer needed
                         _chatConfig.dispose();
+                        _callApi.dispose();
                         if (Navigator.of(context).canPop())
                           Navigator.of(context).pop();
-                        _callApi.postMessages(store.state.currentUser.email);
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,94 +232,123 @@ class _ChatFragmentState extends State<ChatFragment> {
                     color: Colors.grey.shade800,
                   ),
                   onPressed: () {
+                    if (!_chatConfig.sentMessagesFlag)
+                      _callApi.postMessages(store.state.currentUser.email);
+
                     ///Dispose of the message streams and sinks as they are no longer needed
                     _chatConfig.dispose();
+                    _callApi.dispose();
                     if (Navigator.of(context).canPop())
                       Navigator.of(context).pop();
                   }),
             ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
         children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: DashChat(
-              height: MediaQuery.of(context).size.height - 120.0,
-              key: _chatViewKey,
-              inverted: false,
-              onSend: (message) {
-                onSend(message, store: store);
-              },
-              user: user,
-              inputDecoration:
-                  InputDecoration(hintText: "Please type here ..."),
-              dateFormat: DateFormat('dd-MMM-yyyy'),
-              timeFormat: DateFormat('HH:mm'),
-              messages: messages,
-              showUserAvatar: false,
-              showAvatarForEveryMessage: false,
-              scrollToBottom: true,
-              onPressAvatar: (ChatUser user) {
-                print("OnPressAvatar: ${user.name}");
-              },
-              onLongPressAvatar: (ChatUser user) {
-                print("OnLongPressAvatar: ${user.name}");
-              },
-              inputMaxLines: 5,
-              alwaysShowSend: false,
-              inputTextStyle: TextStyle(fontSize: 16.0),
-              inputToolbarPadding: EdgeInsets.only(left: 8.0),
-              inputToolbarMargin: EdgeInsets.all(4.0),
-              inputContainerStyle: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(width: 0.3, color: Colors.black),
-                color: Colors.white,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                flex: 1,
+                child: DashChat(
+                  height: MediaQuery.of(context).size.height - 120.0,
+                  key: _chatViewKey,
+                  inverted: false,
+                  onSend: (message) {
+                    onSend(message, store: store);
+                  },
+                  user: user,
+                  inputDecoration:
+                      InputDecoration(hintText: "Please type here ..."),
+                  dateFormat: DateFormat('dd-MMM-yyyy'),
+                  timeFormat: DateFormat('HH:mm'),
+                  messages: messages,
+                  showUserAvatar: false,
+                  showAvatarForEveryMessage: false,
+                  scrollToBottom: true,
+                  onPressAvatar: (ChatUser user) {
+                    print("OnPressAvatar: ${user.name}");
+                  },
+                  onLongPressAvatar: (ChatUser user) {
+                    print("OnLongPressAvatar: ${user.name}");
+                  },
+                  inputMaxLines: 5,
+                  alwaysShowSend: false,
+                  inputTextStyle: TextStyle(fontSize: 16.0),
+                  inputToolbarPadding: EdgeInsets.only(left: 8.0),
+                  inputToolbarMargin: EdgeInsets.all(4.0),
+                  inputContainerStyle: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(width: 0.3, color: Colors.black),
+                    color: Colors.white,
+                  ),
+                  messageContainerDecorationRecepient: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                  ),
+                  messageContainerDecoration: BoxDecoration(
+                    color: Colors.blue.shade700,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                  ),
+                  quickReplyStyle: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(width: 0.3, color: Colors.black),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
+                  quickReplyTextStyle: TextStyle(fontSize: 16),
+                  onQuickReply: (Reply reply) {
+                    onSend(ChatMessage(
+                        text: reply.title,
+                        createdAt: DateTime.now(),
+                        user: user));
+                  },
+                  onLoadEarlier: () {
+                    print("laoding...");
+                  },
+                  shouldShowLoadEarlier: false,
+                  showTraillingBeforeSend: true,
+                ),
               ),
-              messageContainerDecorationRecepient: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-              ),
-              messageContainerDecoration: BoxDecoration(
-                color: Colors.blue.shade700,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-              ),
-              quickReplyStyle: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(width: 0.3, color: Colors.black),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              quickReplyTextStyle: TextStyle(fontSize: 16),
-              onQuickReply: (Reply reply) {
-                onSend(ChatMessage(
-                    text: reply.title, createdAt: DateTime.now(), user: user));
-              },
-              onLoadEarlier: () {
-                print("laoding...");
-              },
-              shouldShowLoadEarlier: false,
-              showTraillingBeforeSend: true,
-//              trailing: <Widget>[
-//                IconButton(
-//                  icon: Icon(Icons.photo),
-//                  onPressed: () async {
-//                    File result = await ImagePicker.pickImage(
-//                      source: ImageSource.gallery,
-//                      maxHeight: 400,
-//                      maxWidth: 400,
-//                    );
-//                  },
-//                ),
-//              ],
-            ),
+            ],
           ),
+          StreamBuilder<bool>(
+              stream: _chatConfig.chatBotNotifyMessageStream,
+              initialData: false,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == true) {
+                    return Positioned(
+                        top: 0,
+                        left: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Assistant is typing ...",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ));
+                  }
+                }
+                return Container(
+                  height: 0,
+                  width: 0,
+                );
+              })
         ],
       ),
     );

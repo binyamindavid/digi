@@ -82,7 +82,7 @@ class CallApi {
 
   postMessages(email, {store, String url}) async {
     ///[AppState] cannot be null, if not, throws an error
-    assert(store != null, "Store is null");
+    assert(this.store != null, "Store is null");
 
     if (email != null) {
       print("Output @@@ ${email}");
@@ -91,7 +91,8 @@ class CallApi {
         //iterate through the messages and concat them to the body text
         String bodyTxt = "";
         this.store.state.messages.forEach((element) {
-          bodyTxt = "$bodyTxt" "$element";
+          bodyTxt = "$bodyTxt"
+              '  {\n    "user":"${element.user != null ? element.user.name : "--"}", \n    "message":"${element.text}"\n  },\r\n';
         });
 
         var urlEP = '${url ?? endPointUrl}/new_messages?email=$email';
@@ -101,7 +102,7 @@ class CallApi {
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({
           'id': "${this.store.state.patientData.id}",
-          'body': '$bodyTxt',
+          'body': '{\n\t"messages":[\n\t\t$bodyTxt\n\t]\n}',
         });
         request.headers[HttpHeaders.contentTypeHeader] =
             'application/json; charset=utf-8';
@@ -125,10 +126,10 @@ class CallApi {
         print("@@@error decoding:$e");
       }
     }
+  }
 
-    ///Dispose and close connections
-    void dispose() {
-      if (client != null) client.close();
-    }
+  ///Dispose and close connections
+  void dispose() {
+    if (client != null) client.close();
   }
 }

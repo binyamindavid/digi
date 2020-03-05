@@ -1,8 +1,11 @@
+import 'package:digamobile/actions/messaging_actions.dart';
+import 'package:digamobile/models/app_state.dart';
 import 'package:digamobile/screens/fragments/chat_fragment.dart';
 import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:digamobile/styles/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class HomePage extends StatelessWidget {
   final String title;
@@ -101,6 +104,8 @@ class _HomeScreen extends StatelessWidget {
       //floatingActionButton: new IncreaseCountButton());
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          StoreProvider.of<AppState>(context)
+              .dispatch(DeleteAllMessagesAction());
           Navigator.of(context).pushNamed(ConstantsRoutes.HOME_CHAT_PAGE);
         },
         child: Icon(Icons.chat),

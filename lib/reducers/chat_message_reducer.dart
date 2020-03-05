@@ -19,5 +19,10 @@ List<ChatMessage> chatMessageReducer(
     return [...currentMessages, ...action.payload];
   }
 
+  if (action is DeleteAllMessagesAction) {
+    if (currentMessages != null) currentMessages.clear();
+    return <ChatMessage>[];
+  }
+
   return currentMessages;
 }

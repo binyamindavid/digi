@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:digamobile/actions/messaging_actions.dart';
 import 'package:digamobile/models/api_specific_models/snatchbot_message_response_model.dart';
 import 'package:digamobile/models/app_state.dart';
+import 'package:digamobile/services/call_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +26,7 @@ class ChatbotServiceConfig {
         containerColor: Colors.white,
         color: Colors.blue.shade800,
         avatar: chatbotAvatarLink);
-
+    _internalMessageNotifyStreamSink.add(true);
     emitNewMessage(new ChatUiMessage(
         message: ChatMessage(
             text: "Welcome to DiGA assistant. Please type to proceed",
@@ -55,6 +56,9 @@ class ChatbotServiceConfig {
   final endPointUrl;
   http.Client client;
 
+  ///[bool] flag to say if messages have already been sent
+  bool sentMessagesFlag = false;
+
   ///[StreamController] Controls the stream and Sink for [ChatUiMessage] api
   StreamController<ChatUiMessage> _apiStreamController =
       StreamController<ChatUiMessage>();
@@ -66,6 +70,21 @@ class ChatbotServiceConfig {
   ///[_internalMessageStreamSink] is the internal  [StreamSink]
   ///that is used to pass data to all listeners
   StreamSink get _internalMessageStreamSink => _apiStreamController.sink;
+
+  ///[StreamController] Controls the stream and Sink for [bool] is typing effect api
+  StreamController<bool> _isTypeingStreamController = StreamController<bool>();
+
+  ///[chatBotNotifyMessageStream] is a [Stream]that will be subscribed to by any listeners
+  ///emmits is typing flag from this api that are passed into the internal [StreamSink]
+  Stream get chatBotNotifyMessageStream => _isTypeingStreamController.stream;
+
+  ///[_internalMessageNotifyStreamSink] is the internal  [StreamSink]
+  ///that is used to pass data to all listeners
+  StreamSink get _internalMessageNotifyStreamSink =>
+      _isTypeingStreamController.sink;
+
+  ///[int] milliseconds to wait while displaying user is typing prompt
+  int _millisToWait = 0;
 
   sendMessage(ChatMessage message,
       {store,
@@ -79,6 +98,12 @@ class ChatbotServiceConfig {
     this.store.dispatch(AddMessageAction(payload: message));
     if (message.text != null) {
       print("Output @@@ ${message.text}");
+
+      if (!sentMessagesFlag) if (message.text.contains("END")) {
+        CallApi(store: this.store)
+            .postMessages(this.store.state.currentUser.email);
+        sentMessagesFlag = true;
+      }
       try {
         var urlEP =
             '${url}?user_id=${this.userId}&message_id=${this.messageId}';
@@ -115,11 +140,18 @@ class ChatbotServiceConfig {
     return response;
   }
 
-  emitNewMessage(ChatUiMessage message) {
-    print("Emitting messages ${message.message}");
-    if (store != null)
-      this.store.dispatch(AddMessageAction(payload: message.message));
-    _internalMessageStreamSink.add(message);
+  emitNewMessage(ChatUiMessage message, {bool last: false}) async {
+    _internalMessageNotifyStreamSink.add(true);
+    await Timer(Duration(milliseconds: message.delayMilliSeconds), () {
+      print("Emitting messages ${message.message}");
+      if (store != null)
+        this.store.dispatch(AddMessageAction(payload: message.message));
+      _internalMessageStreamSink.add(message);
+      _millisToWait -= message.delayMilliSeconds;
+      _millisToWait < 0 ? _millisToWait = 0 : null;
+
+      _internalMessageNotifyStreamSink.add(!last);
+    });
   }
 
   ChatMessage configureChatMessage(ChatReponseModel response) {
@@ -150,7 +182,7 @@ class ChatbotServiceConfig {
         user: null));
   }
 
-  void deliverToUi(ChatReponseModel response) {
+  void deliverToUi(ChatReponseModel response) async {
     int messagesInResponse = response.messages.length;
     print("messages in response $messagesInResponse");
 
@@ -168,12 +200,20 @@ class ChatbotServiceConfig {
     ///Iterates over the messages and emits them one at a time
     for (int i = 0; i < messagesInResponse; i++) {
       if (i == messagesInResponse - 1) {
-        emitNewMessage(
-            new ChatUiMessage(message: configureChatMessage(response)));
+        _millisToWait += response.messages.last.message.length * 15;
+        await emitNewMessage(
+            new ChatUiMessage(
+              message: configureChatMessage(response),
+              delayMilliSeconds: _millisToWait,
+            ),
+            last: true);
+        _millisToWait = 0;
       } else {
-        emitNewMessage(new ChatUiMessage(
+        _millisToWait += response.messages[i].message.length * 15;
+        await emitNewMessage(new ChatUiMessage(
             message: ChatMessage(
-                text: response.messages[i].message, user: _botUser, id: "$i")));
+                text: response.messages[i].message, user: _botUser, id: "$i"),
+            delayMilliSeconds: response.messages[i].message.length * 15));
       }
     }
   }
@@ -195,5 +235,5 @@ class ChatUiMessage {
   ///To give the 'bot is typing' effect
   final int delayMilliSeconds;
 
-  ChatUiMessage({@required this.message, this.delayMilliSeconds: 300});
+  ChatUiMessage({@required this.message, this.delayMilliSeconds: 0});
 }
