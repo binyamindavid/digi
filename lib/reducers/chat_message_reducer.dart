@@ -4,7 +4,20 @@ import 'package:digamobile/models/api_specific_models/snatchbot_message_response
 
 List<ChatMessage> chatMessageReducer(
     List<ChatMessage> currentMessages, action) {
-  if (action is AddMessageAction) {}
+  if (action is AddMessageAction) {
+    if (currentMessages != null) {
+      return [...currentMessages, action.payload];
+    } else {
+      return <ChatMessage>[]..add(action.payload);
+    }
+  }
+
+  if (action is AddAllMessagesAction) {
+    if (currentMessages == null) {
+      return action.payload;
+    }
+    return [...currentMessages, ...action.payload];
+  }
 
   return currentMessages;
 }

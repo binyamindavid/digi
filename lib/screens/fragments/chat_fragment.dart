@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:digamobile/models/app_state.dart';
+import 'package:digamobile/services/call_api_service.dart';
 import 'package:digamobile/services/chatbot_service_config.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -8,6 +9,7 @@ import 'package:digamobile/screens/fragments/templates/destination_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:redux/redux.dart';
 //import 'package:image_picker/image_picker.dart';
 
 class ChatFragment extends StatefulWidget {
@@ -139,10 +141,16 @@ class _ChatFragmentState extends State<ChatFragment> {
   ///the value can be set using target platform in the production version
   bool _isIos = true;
 
+  CallApi _callApi;
+
   @override
   Widget build(BuildContext context) {
-    AppState store = StoreProvider.of<AppState>(context).state;
-    print("@@@@@@------- user from store ${store.currentUser.email}");
+    Store<AppState> store = StoreProvider.of<AppState>(context);
+    print("@@@@@@------- user from store ${store.state.currentUser.email}");
+    if (_callApi == null) {
+      _callApi = CallApi(store: store);
+    }
+    _chatConfig.set(store);
 
     return Scaffold(
       extendBody: false,
@@ -173,6 +181,7 @@ class _ChatFragmentState extends State<ChatFragment> {
                         _chatConfig.dispose();
                         if (Navigator.of(context).canPop())
                           Navigator.of(context).pop();
+                        _callApi.postMessages(store.state.currentUser.email);
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,3 +1,4 @@
+import 'package:dash_chat/dash_chat.dart';
 import 'package:digamobile/models/api_specific_models/diga_api_patient_model.dart';
 import 'package:digamobile/models/clinic_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,9 +9,11 @@ class AppState {
   final FirebaseUser currentUser;
   final DiagPatientModel patientData;
   final List<ClinicModel> clinics;
+  final List<ChatMessage> messages;
 
   AppState(
-      {this.patientData,
+      {this.messages,
+      this.patientData,
       this.count = 0,
       this.isLoading = false,
       this.currentUser,
@@ -22,6 +25,7 @@ class AppState {
       currentUser: currentUser ?? this.currentUser,
       clinics: clinics ?? this.clinics,
       patientData: patientData ?? this.patientData,
+      messages: messages ?? this.messages,
     );
   }
 

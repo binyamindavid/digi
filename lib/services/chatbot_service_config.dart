@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:digamobile/actions/messaging_actions.dart';
 import 'package:digamobile/models/api_specific_models/snatchbot_message_response_model.dart';
 import 'package:digamobile/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:dash_chat/dash_chat.dart';
+import 'package:redux/redux.dart';
 
 class ChatbotServiceConfig {
   ChatbotServiceConfig(this.endPointUrl,
@@ -33,7 +35,7 @@ class ChatbotServiceConfig {
 
   ///A reference to the global redux [AppState] store to retrieve username and other config values
   ///Cannot be null
-  AppState store;
+  Store<AppState> store;
   String chatbotAvatarLink;
 
   set(state) => store;
@@ -73,6 +75,8 @@ class ChatbotServiceConfig {
     if (store != null) {
       if (this.store == null) this.store = store;
     }
+
+    this.store.dispatch(AddMessageAction(payload: message));
     if (message.text != null) {
       print("Output @@@ ${message.text}");
       try {
@@ -113,6 +117,8 @@ class ChatbotServiceConfig {
 
   emitNewMessage(ChatUiMessage message) {
     print("Emitting messages ${message.message}");
+    if (store != null)
+      this.store.dispatch(AddMessageAction(payload: message.message));
     _internalMessageStreamSink.add(message);
   }
 
@@ -140,7 +146,7 @@ class ChatbotServiceConfig {
     assert(store != null, "Store is null");
     sendMessage(ChatMessage(
         text:
-            '${store.patientData.firstName ?? ""} ${store.patientData.lastName ?? ""}',
+            '${store.state.patientData.firstName ?? ""} ${store.state.patientData.lastName ?? ""}',
         user: null));
   }
 

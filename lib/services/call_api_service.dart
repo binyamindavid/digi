@@ -76,9 +76,59 @@ class CallApi {
             .catchError((error) => print(error.toString()));
       } catch (e) {
         print("@@@error decoding:$e");
-      } finally {
-        if (client != null) client.close();
       }
+    }
+  }
+
+  postMessages(email, {store, String url}) async {
+    ///[AppState] cannot be null, if not, throws an error
+    assert(store != null, "Store is null");
+
+    if (email != null) {
+      print("Output @@@ ${email}");
+
+      try {
+        //iterate through the messages and concat them to the body text
+        String bodyTxt = "";
+        this.store.state.messages.forEach((element) {
+          bodyTxt = "$bodyTxt" "$element";
+        });
+
+        var urlEP = '${url ?? endPointUrl}/new_messages?email=$email';
+
+        print("@@@ ----  $bodyTxt");
+
+        var request = new http.Request('POST', Uri.parse(urlEP));
+        var body = json.encode({
+          'id': "${this.store.state.patientData.id}",
+          'body': '$bodyTxt',
+        });
+        request.headers[HttpHeaders.contentTypeHeader] =
+            'application/json; charset=utf-8';
+
+        request.body = body;
+        await client
+            .send(request)
+            .then(
+              (response) => response.stream.bytesToString().then(
+                (value) {
+                  print(value.toString());
+
+                  if (value == null) {
+                    return;
+                  }
+                },
+              ),
+            )
+            .catchError((error) => print(error.toString()));
+      } catch (e) {
+        print("@@@error decoding:$e");
+      }
+    }
+
+    ///Dispose and close connections
+    void dispose() {
+      if (client != null) client.close();
     }
   }
 }
