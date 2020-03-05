@@ -3,6 +3,7 @@ import 'package:digamobile/login_screen.dart';
 import 'package:digamobile/models/app_state.dart';
 import 'package:digamobile/screens/app_base_screen.dart';
 import 'package:digamobile/screens/home_page.dart';
+import 'package:digamobile/services/call_api_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -27,6 +28,9 @@ class AuthenticationService extends StatelessWidget {
               var store = StoreProvider.of<AppState>(context);
               print("@@@@@----username from firebase ${data.toString()}");
               store.dispatch(SaveInformationOnLogin(payload: data));
+
+              CallApi _apiPatientData = CallApi();
+              _apiPatientData.getPatientDetail(data.email, store: store);
 
               return AppBase(
                 isLoggedIn: true,

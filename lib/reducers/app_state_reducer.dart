@@ -4,7 +4,9 @@ import 'package:digamobile/reducers/counter_reducer.dart';
 
 AppState appReducer(AppState state, action) {
   return new AppState(
-      isLoading: false,
-      count: counterReducer(state.count, action),
-      currentUser: authReducer(state.currentUser, action));
+    isLoading: false,
+    count: counterReducer(state.count, action),
+    currentUser: authReducer(state.currentUser, action),
+    patientData: patientReducer(state.patientData, action),
+  );
 }

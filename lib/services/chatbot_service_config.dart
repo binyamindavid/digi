@@ -43,7 +43,7 @@ class ChatbotServiceConfig {
 
   ///Add the requred params for the conversation stream
   ///The [user_id] should be unique
-  String userId = "Fjorde_${DateTime.now().millisecondsSinceEpoch}";
+  String userId = "diga_${DateTime.now().millisecondsSinceEpoch}";
 
   ///[message_id] only used when continuing a chat from a different platform,
   ///default to 0
@@ -142,7 +142,8 @@ class ChatbotServiceConfig {
   ///A workaround since the snatchbot platform doesn't receive variables directly from post calls
   void sendUserDataToBot() {
     assert(store != null, "Store is null");
-    sendMessage(ChatMessage(text: store.currentUser.email, user: null));
+    sendMessage(
+        ChatMessage(text: store.patientData.firstName ?? "", user: null));
   }
 
   void deliverToUi(ChatReponseModel response) {
