@@ -20,10 +20,7 @@ class AppBase extends StatefulWidget {
 }
 
 class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
-  final GlobalKey<InnerDrawerState> _innerDrawerKey =
-      GlobalKey<InnerDrawerState>();
-
-  bool _onTapToClose = false;
+  bool _onTapToClose = true;
   bool _swipe = true;
   bool _tapScaffold = true;
   bool _isChatEnabled = true;
@@ -48,6 +45,9 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
   // Custom navigator takes a global key if you want to access the
   // navigator from outside it's widget tree subtree
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  /// Get reference to the internal [InnerDrawer] state in order to open the [InnerDrawer]
+  GlobalKey<InnerDrawerState> _innerDrawerKey = GlobalKey<InnerDrawerState>();
 
   @override
   void initState() {
@@ -108,7 +108,6 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
         key: _innerDrawerKey,
         onTapClose: _onTapToClose,
         tapScaffoldEnabled: _tapScaffold,
-
         offset: IDOffset.horizontal(_offset),
         swipe: _swipe,
         boxShadow: _direction == InnerDrawerDirection.start &&
@@ -122,14 +121,10 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
           dragUpdate: _dragUpdate,
           isSignedIn: widget.isLoggedIn,
         ),
-
-        //rightChild: MapFilterDrawer(),
-
         onDragUpdate: (double val, InnerDrawerDirection direction) {
           _direction = direction;
           setState(() => _dragUpdate = val);
         },
-        //innerDrawerCallback: (a) => print(a),
         scaffold: Scaffold(
             floatingActionButton: _isChatEnabled
                 ? null
@@ -176,13 +171,8 @@ class _AppBaseState extends State<AppBase> with TickerProviderStateMixin {
                         ? HomePage(
                             "Welcome ..",
                             menuClicked: () {
-                              print("clicked in base");
-                              _controller.status == AnimationStatus.completed ||
-                                      _controller.status ==
-                                          AnimationStatus.reverse
-                                  ? _controller.forward()
-                                  : _controller.reverse();
-                              _controller.forward();
+                              _innerDrawerKey.currentState.toggle(
+                                  direction: InnerDrawerDirection.start);
                             },
                           )
                         : DestinationView(

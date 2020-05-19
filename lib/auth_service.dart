@@ -18,7 +18,7 @@ class AuthService {
       print('Signed in');
     }).catchError((e) {
       onError(e);
-      print(e);
+      print("@#@-$e");
     });
   }
 }

@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:digamobile/actions/auth_actions.dart';
 import 'package:digamobile/models/api_specific_models/diga_api_patient_model.dart';
 import 'package:digamobile/models/app_state.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
 
@@ -33,12 +31,12 @@ class CallApi {
     assert(store != null, "Store is null");
 
     if (email != null) {
-      print("Output @@@ ${email}");
+      // print("Output @@@ ${email}");
 
       try {
         var urlEP = '${url ?? endPointUrl}/profile?email=$email';
 
-        print("@@@ ----  $urlEP");
+        // print("@@@ ----  $urlEP");
 
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({
@@ -98,7 +96,7 @@ class CallApi {
 
         var urlEP = '${url ?? endPointUrl}/new_messages?email=$email';
 
-        print("@@@ ----  $bodyTxt");
+        // print("@@@ ----  $bodyTxt");
 
         var request = new http.Request('POST', Uri.parse(urlEP));
         var body = json.encode({
