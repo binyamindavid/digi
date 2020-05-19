@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:redux/redux.dart';
 
 import 'home_page.dart';
